@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>انتخاب داشبورد</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/iransans-font@v1.0/dist/font-face.css">
+
+  <style>
+    :root{
+      --bg:#050a14;
+      --card:#0b1733;
+      --text:#f2f7ff;
+      --muted:#b6c4d7;
+      --line:rgba(0,149,218,.18);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius:18px;
+      --font: "IRANSans","IRANSansWeb",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+      --blue:#0095da;
+      --orange:#ff4f00;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 12% 10%, rgba(0,149,218,.22), transparent 58%),
+        radial-gradient(1000px 700px at 55% 95%, rgba(255,79,0,.12), transparent 62%),
+        var(--bg);
+    }
+    .wrap{
+      width:min(980px, 94vw);
+      margin:28px auto;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(11,23,51,.92), rgba(5,10,20,.72));
+      border:1px solid rgba(0,149,218,.16);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    h1{ margin:0 0 6px; font-size:18px; font-weight:900; }
+    p{ margin:0; color:var(--muted); font-size:13px; line-height:1.8; }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:12px;
+      margin-top:12px;
+    }
+    a.btn{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:16px 14px;
+      border-radius:16px;
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(8,19,42,.55);
+      transition: transform .08s ease, border-color .18s ease, filter .18s ease;
+    }
+    a.btn:hover{
+      border-color: rgba(0,149,218,.35);
+      filter: brightness(1.05);
+    }
+    a.btn:active{ transform: translateY(1px); }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      width:max-content;
+      padding:3px 10px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid rgba(0,149,218,.28);
+      background: rgba(0,149,218,.12);
+    }
+    .tag.orange{
+      border-color: rgba(255,79,0,.35);
+      background: rgba(255,79,0,.10);
+    }
+    .ttl{ font-weight:950; font-size:14px; }
+    .sub{ color:var(--muted); font-size:12px; }
+    @media (max-width:720px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>انتخاب داشبورد</h1>
+
+      <div class="grid">
+        <a class="btn" href="dashboardver2.html/ai">
+            <span class="tag orange">#/ai</span>
+            <span class="ttl">داشبورد هوش مصنوعی</span>
+          </a>
+          
+          <a class="btn" href="dashboardver2.html/data">
+            <span class="tag">#/data</span>
+            <span class="ttl">داشبورد علوم داده</span>
+          </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

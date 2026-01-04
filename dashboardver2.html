@@ -1,0 +1,2433 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>داشبورد دوره‌های آکادمی همراه اول</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/iransans-font@v1.0/dist/font-face.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<style>
+  :root{
+    --brand-blue: #0095da;
+    --brand-orange:#ff4f00;
+    --brand-deep: #295cab;
+    --brand-black:#000000;
+
+    --bg:#050a14;
+    --card:#0b1733;
+    --card2:#08132a;
+
+    --text:#f2f7ff;
+    --muted:#b6c4d7;
+
+    --line:rgba(0,149,218,.18);
+    --line2:rgba(255,255,255,.10);
+
+    --accent:var(--brand-blue);
+    --accent2:var(--brand-deep);
+
+    --bad:#ff6b6b;
+    --good:#36d399;
+    --warn:var(--brand-orange);
+
+    --shadow: 0 14px 40px rgba(0,0,0,.45);
+    --radius:18px;
+
+    --font: "IRANSans", "IRANSansWeb", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--font);
+    color:var(--text);
+    background:
+      radial-gradient(1200px 800px at 12% 10%, rgba(0,149,218,.22), transparent 58%),
+      radial-gradient(900px 700px at 88% 25%, rgba(41,92,171,.20), transparent 60%),
+      radial-gradient(1000px 700px at 55% 95%, rgba(255,79,0,.12), transparent 62%),
+      var(--bg);
+  }
+
+  .container{
+    width:min(1400px, 94vw);
+    margin:24px auto 48px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:16px 18px;
+    background: linear-gradient(135deg,
+      rgba(41,92,171,.96) 0%,
+      rgba(0,149,218,.42) 55%,
+      rgba(8,19,42,.92) 100%
+    );
+    border:1px solid rgba(0,149,218,.22);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+
+  header::after{
+    content:"";
+    position:absolute;
+    inset:-60px -80px auto auto;
+    width:240px;
+    height:240px;
+    background:radial-gradient(circle at 30% 30%, rgba(255,79,0,.10), transparent 65%);
+    filter:blur(6px);
+    opacity:.55;
+    pointer-events:none;
+  }
+
+  .title{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    position:relative;
+    z-index:1;
+  }
+  .title h1{
+    margin:0;
+    font-size:18px;
+    letter-spacing:.2px;
+    font-weight:900;
+  }
+
+  .right-actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    gap:10px;
+    min-width:280px;
+    position:relative;
+    z-index:1;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+
+  .logo{
+    width:44px;
+    height:44px;
+    object-fit:contain;
+    border-radius:12px;
+    background: rgba(8,19,42,.35);
+    border:1px solid rgba(255,255,255,.12);
+    padding:6px;
+  }
+
+  .pill{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 10px;
+    border-radius:999px;
+    border:1px solid rgba(0,149,218,.20);
+    background:rgba(8,19,42,.55);
+    color:rgba(242,247,255,.78);
+    font-size:12px;
+    white-space:nowrap;
+    backdrop-filter: blur(8px);
+  }
+  .dot{width:8px;height:8px;border-radius:999px;background:var(--warn)}
+  .dot.ok{background:var(--good)}
+  .dot.bad{background:var(--bad)}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(12, 1fr);
+    gap:14px;
+  }
+
+  .card{
+    background:
+      linear-gradient(180deg, rgba(11,23,51,.92), rgba(5,10,20,.72));
+    border:1px solid rgba(0,149,218,.16);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:14px;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(900px 220px at 20% 0%, rgba(0,149,218,.08), transparent 55%);
+    pointer-events:none;
+  }
+
+  .card.filters{
+    overflow: visible;
+    z-index: 50;
+  }
+
+  .kpi{
+    grid-column: span 3;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-height:92px;
+    position:relative;
+    z-index:1;
+  }
+  .kpi .label{
+    color:rgba(182,196,215,.92);
+    font-size:12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .kpi .label i{
+    font-size: 14px;
+    opacity: .9;
+    color: var(--accent);
+  }
+  .kpi .value{
+    font-size:28px;
+    font-weight:950;
+    letter-spacing:.3px;
+    color:var(--text);
+  }
+  .kpi .hint{
+    color:rgba(182,196,215,.88);
+    font-size:12px;
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .badge{
+    padding:3px 9px;
+    border-radius:999px;
+    border:1px solid rgba(0,149,218,.22);
+    background:rgba(0,149,218,.14);
+    color:rgba(242,247,255,.92);
+    font-size:11px;
+  }
+
+  .filters{
+    grid-column: span 12;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px 12px;
+    align-items:flex-end;
+    position:relative;
+    z-index:1;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:180px;
+    flex: 0 1 180px;
+    position:relative;
+  }
+  .field.wide{
+    min-width:400px;
+    flex: 1 1 420px;
+  }
+
+  .field.path-field{ z-index: 200; }
+  .field.path-field{
+    flex: 0 0 420px;
+    width: 420px;
+    max-width: 420px;
+  }
+
+  .flabel{
+    font-size:11px;
+    color:rgba(182,196,215,.92);
+    padding-right:2px;
+    user-select:none;
+    line-height:1.2;
+  }
+
+  .input, select{
+    background:rgba(8,19,42,.70);
+    border:1px solid rgba(0,149,218,.18);
+    color:var(--text);
+    padding:10px 10px;
+    border-radius:14px;
+    font-size:13px;
+    outline:none;
+    min-width:180px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+    font-family: var(--font);
+  }
+  .input::placeholder{color:rgba(182,196,215,.70)}
+  .input:focus, select:focus{
+    border-color: rgba(0,149,218,.55);
+    box-shadow:
+      0 0 0 4px rgba(0,149,218,.14),
+      0 0 0 7px rgba(255,79,0,.08);
+  }
+  select{cursor:pointer}
+
+  #pathDropdownButton{
+    background:rgba(8,19,42,.70);
+    border:1px solid rgba(0,149,218,.18);
+    color:var(--text);
+    padding:12px 14px 12px 22px;
+    border-radius:14px;
+    font-size:13px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+    transition:all .18s ease;
+    font-family: var(--font);
+    width:100%;
+    min-width: 420px;
+  }
+  #pathDropdownButton:hover{ border-color:rgba(0,149,218,.55); }
+  #pathDropdownButton svg{ width:18px; height:18px; opacity:.9; }
+
+  #pathDropdown{
+    position:absolute;
+    top:calc(100% + 8px);
+    right:0;
+    left:auto;
+    width: 420px;
+    max-width: min(92vw, 520px);
+    background:rgba(11,23,51,.98);
+    border:1px solid rgba(0,149,218,.22);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    z-index:9999;
+    overflow:hidden;
+    display:none;
+  }
+  #pathDropdown.open{ display:block; }
+
+  .path-search-wrap{
+    padding:12px 12px;
+    border-bottom:1px solid rgba(0,149,218,.16);
+    position:relative;
+  }
+  #pathSearchInput{
+    width:100%;
+    background:rgba(8,19,42,.8);
+    border:1px solid rgba(0,149,218,.3);
+    color:var(--text);
+    padding:10px 38px 10px 12px;
+    border-radius:14px;
+    font-size:13px;
+    font-family: var(--font);
+  }
+  #pathSearchInput:focus{
+    outline:none;
+    border-color:rgba(0,149,218,.6);
+  }
+  .path-search-icon{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    pointer-events:none;
+    opacity:.85;
+  }
+  .path-search-icon svg{ width:18px; height:18px; }
+
+  .path-list-wrap{
+    max-height:280px;
+    overflow:auto;
+    padding:8px;
+    background: rgba(8,19,42,.25);
+    border-radius: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,149,218,.85) rgba(8,19,42,.65);
+  }
+
+  .path-list-wrap::-webkit-scrollbar{ width: 10px; }
+  .path-list-wrap::-webkit-scrollbar-track{
+    background: rgba(8,19,42,.65);
+    border: 1px solid rgba(0,149,218,.18);
+    border-radius: 999px;
+  }
+  .path-list-wrap::-webkit-scrollbar-thumb{
+    background: linear-gradient(90deg, rgba(41,92,171,.95), rgba(0,149,218,.85));
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 999px;
+  }
+
+  .path-checkbox-item{
+    display:flex;
+    align-items:center;
+    padding:10px 10px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:all .18s ease;
+    gap:10px;
+  }
+  .path-checkbox-item:hover{ background:rgba(0,149,218,.15); }
+  .path-checkbox-item input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    accent-color:#0095da;
+    cursor:pointer;
+    margin:0;
+  }
+  .path-checkbox-item label{
+    cursor:pointer;
+    font-size:13px;
+    flex:1;
+    user-select:none;
+  }
+  .path-checkbox-item.hidden{ display:none; }
+
+  #pathFooter{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 14px;
+    border-top:1px solid rgba(0,149,218,.16);
+    font-size:12px;
+    color:rgba(182,196,215,.9);
+    gap:12px;
+  }
+  #pathClearAll{
+    color:rgba(255,107,107,.9);
+    cursor:pointer;
+    user-select:none;
+    white-space:nowrap;
+  }
+  #pathClearAll:hover{ color:#ff6b6b; }
+
+  .btn{
+    cursor:pointer;
+    user-select:none;
+    border:1px solid rgba(0,149,218,.25);
+    background:linear-gradient(90deg, rgba(0,149,218,.92), rgba(41,92,171,.88));
+    color:#ffffff;
+    padding:10px 12px;
+    border-radius:14px;
+    font-size:13px;
+    font-weight:800;
+    transition: transform .06s ease, filter .18s ease, box-shadow .18s ease;
+    box-shadow: 0 10px 22px rgba(0,0,0,.22);
+    font-family: var(--font);
+  }
+  .btn:hover{filter:brightness(1.05)}
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{
+    background:rgba(8,19,42,.55);
+    border:1px solid rgba(255,255,255,.10);
+    color:rgba(242,247,255,.92);
+    box-shadow:none;
+  }
+  .btn.secondary:hover{
+    border-color: rgba(0,149,218,.26);
+    background:rgba(8,19,42,.70);
+  }
+
+  .chart{
+    grid-column: span 6;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    min-height:300px;
+    position:relative;
+    z-index:1;
+  }
+  .chart h3{
+    margin:0;
+    font-size:14px;
+    color:rgba(242,247,255,.96);
+    letter-spacing:.2px;
+    font-weight:900;
+  }
+
+  .chart-grid{
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:12px;
+    align-items:center;
+    min-height:260px;
+  }
+  .chart-canvas{
+    height:240px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px;
+    border-radius:14px;
+    border:1px solid rgba(0,149,218,.16);
+    background: rgba(8,19,42,.22);
+  }
+  .chart-canvas.tall{ height:300px; }
+  .chart-canvas.xl{ height:360px; }
+  .chart-canvas canvas{
+    width:100% !important;
+    height:100% !important;
+  }
+
+  .chart-summary{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .summary-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(8,19,42,.35);
+  }
+  .summary-row .name{
+    color:rgba(182,196,215,.92);
+    font-size:12px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 70%;
+  }
+  .summary-row .val{
+    direction:ltr;
+    text-align:left;
+    color:rgba(242,247,255,.95);
+    font-size:12px;
+    font-weight:900;
+    white-space:nowrap;
+  }
+  .summary-row .pct{
+    direction:ltr;
+    text-align:left;
+    color:rgba(182,196,215,.92);
+    font-size:12px;
+    white-space:nowrap;
+  }
+
+  .trend{ grid-column: span 12; min-height:380px; }
+  .trend .chart-grid{ grid-template-columns: 1fr; }
+  .trend .chart-canvas{ height:300px; }
+  .trend-note{
+    color:rgba(182,196,215,.9);
+    font-size:12px;
+    margin-top:2px;
+  }
+
+  .wide-12{ grid-column: span 12; }
+  .wide-6 { grid-column: span 6; }
+  .wide-4 { grid-column: span 4; }
+  .wide-3 { grid-column: span 3; }
+
+  /* هشدارها */
+  .alerts{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .alert-item{
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(8,19,42,.35);
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .alert-item .t{
+    font-size:12px;
+    color:rgba(242,247,255,.92);
+    font-weight:900;
+    line-height:1.7;
+  }
+  .alert-item .tag{
+    font-size:11px;
+    padding:3px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    white-space:nowrap;
+    margin-top:2px;
+  }
+
+  .table-wrap{
+    grid-column: span 12;
+    padding:0;
+    overflow:hidden;
+  }
+  .table-top{
+    padding:12px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    border-bottom:1px solid rgba(0,149,218,.16);
+    background:
+      linear-gradient(90deg, rgba(41,92,171,.20), rgba(8,19,42,.38));
+  }
+  .table-top .meta{
+    color:rgba(182,196,215,.92);
+    font-size:12px;
+  }
+  .pager{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  table{
+    width: max-content;
+    min-width: 100%;
+    border-collapse:collapse;
+    border-spacing:0;
+    font-size:12.5px;
+    font-family: var(--font);
+  }
+
+  thead th{
+    position:sticky;
+    top:0;
+    z-index:2;
+    background:
+      linear-gradient(90deg, rgba(41,92,171,.35), rgba(0,149,218,.18));
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid rgba(0,149,218,.18);
+    padding:10px 10px;
+    text-align:right;
+    color:rgba(242,247,255,.82);
+    font-weight:900;
+    white-space:nowrap;
+    border:1px solid rgba(255,255,255,.10);
+  }
+
+  tbody td{
+    border:1px solid rgba(255,255,255,.09);
+    padding:10px 10px;
+    vertical-align:top;
+    color:rgba(242,247,255,.95);
+    transition: box-shadow .16s ease, filter .16s ease;
+  }
+  tbody tr:hover td{
+    box-shadow: inset 0 0 0 9999px rgba(0,149,218,.08);
+  }
+
+  .muted{color:var(--muted)}
+
+  .link{
+    color:var(--accent);
+    text-decoration:none;
+    border-bottom:1px dashed rgba(0,149,218,.55);
+  }
+  .link:hover{
+    border-bottom-style:solid;
+    border-bottom-color: rgba(255,79,0,.75);
+  }
+  .cell-link{ color: inherit !important; border-bottom-color: currentColor !important; opacity:.92; }
+  .cell-link:hover{ opacity:1; }
+
+  .toast{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(0,149,218,.18);
+    background:rgba(8,19,42,.55);
+    color:rgba(182,196,215,.95);
+    font-size:12.5px;
+    display:none;
+    backdrop-filter: blur(8px);
+  }
+  .toast.show{display:block}
+
+  .table-scroll{
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid rgba(0,149,218,.22);
+    border-radius: 14px;
+    background: rgba(8,19,42,.25);
+  }
+  .table-scroll::-webkit-scrollbar{ height: 10px; }
+  .table-scroll::-webkit-scrollbar-track{
+    background: rgba(8,19,42,.65);
+    border: 1px solid rgba(0,149,218,.18);
+    border-radius: 999px;
+  }
+  .table-scroll::-webkit-scrollbar-thumb{
+    background: linear-gradient(90deg, rgba(41,92,171,.95), rgba(0,149,218,.85));
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 999px;
+  }
+
+  @media (max-width: 980px){
+    .kpi{grid-column: span 6;}
+    .chart{grid-column: span 12;}
+    header{flex-direction:column; align-items:stretch;}
+    .right-actions{justify-content:flex-start;}
+    .field{min-width: 160px;}
+    .field.wide{min-width: 260px;}
+    .chart-grid{ grid-template-columns: 1fr; }
+    .chart-canvas{ height: 240px; }
+    .field.path-field{ min-width: 260px; flex: 1 1 260px; width:auto; max-width:none; }
+    #pathDropdownButton{ min-width: 260px; }
+    #pathDropdown{ width: 420px; }
+  }
+
+  #pathDropdownButton{ width: 100%; min-width: 0; }
+  #pathDropdown{ width: 420px; }
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="title">
+        <div class="brand">
+          <img class="logo" src="logo.png" alt="لوگوی آکادمی همراه اول" />
+          <h1 id="dashboardTitle">داشبورد دوره‌های آکادمی همراه اول</h1>
+        </div>
+      </div>
+
+      <div class="right-actions">
+        <div class="pill" title="وضعیت اتصال">
+          <span id="statusDot" class="dot"></span>
+          <span id="statusText">در حال اتصال…</span>
+        </div>
+        <button class="btn secondary" id="btnReload">رفرش داده‌ها</button>
+        <button class="btn secondary" id="btnReset">ریست فیلترها</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card filters">
+        <div class="field wide">
+          <label class="flabel" for="q">جستجو</label>
+          <input class="input" id="q" placeholder="جستجو (عنوان دوره، نام مدرس، …)" />
+        </div>
+
+        <div class="field path-field">
+          <label class="flabel">مسیر تخصصی</label>
+          <button id="pathDropdownButton" type="button" aria-expanded="false">
+            <span id="pathSelectedText">همه مسیرها</span>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+            </svg>
+          </button>
+
+          <div id="pathDropdown" role="dialog" aria-label="انتخاب مسیر تخصصی">
+            <div class="path-search-wrap">
+              <span class="path-search-icon" aria-hidden="true">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                </svg>
+              </span>
+              <input type="text" id="pathSearchInput" placeholder="جستجوی مسیر..." />
+            </div>
+
+            <div class="path-list-wrap">
+              <ul id="pathCheckboxList" style="list-style:none;margin:0;padding:0"></ul>
+            </div>
+
+            <div id="pathFooter">
+              <span><span id="pathSelectedCount">0</span> مسیر انتخاب شده</span>
+              <span id="pathClearAll">پاک کردن همه</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="flabel" for="fType">نوع دوره</label>
+          <select id="fType"></select>
+        </div>
+
+        <div class="field">
+          <label class="flabel" for="fStatus">وضعیت دوره</label>
+          <select id="fStatus"></select>
+        </div>
+
+        <div class="field">
+          <label class="flabel" for="fContract">وضعیت قرارداد</label>
+          <select id="fContract"></select>
+        </div>
+
+        <div class="field">
+          <label class="flabel" for="fPayment">وضعیت پرداخت</label>
+          <select id="fPayment"></select>
+        </div>
+      </div>
+
+      <!-- KPI ها -->
+      <div class="card kpi">
+        <div class="label"><i class="fa-solid fa-play-circle"></i>دوره‌های برگزار‌ شده / منتشر شده</div>
+        <div class="value" id="kpiRunOrPublished">—</div>
+        <div class="hint">
+          <span class="badge" id="kpiUpdated">—</span>
+          <span class="muted">آخرین آپدیت داشبورد</span>
+        </div>
+      </div>
+
+      <div class="card kpi">
+        <div class="label"><i class="fa-solid fa-video"></i>دوره‌های در حال ضبط</div>
+        <div class="value" id="kpiRecording">—</div>
+        <div class="hint"><span class="badge">وضعیت دوره</span><span class="muted">= در حال ضبط</span></div>
+      </div>
+
+      <div class="card kpi">
+        <div class="label"><i class="fa-solid fa-pen-to-square"></i>دوره‌های در حال تدوین</div>
+        <div class="value" id="kpiEditing">—</div>
+        <div class="hint"><span class="badge">وضعیت دوره</span><span class="muted">= در حال تدوین</span></div>
+      </div>
+
+      <div class="card kpi">
+        <div class="label"><i class="fa-solid fa-lightbulb"></i>پیشنهادی / در حال بررسی</div>
+        <div class="value" id="kpiProposedOrReview">—</div>
+        <div class="hint"><span class="badge">وضعیت دوره</span><span class="muted">پیشنهادی + در حال بررسی</span></div>
+      </div>
+
+      <div class="card kpi">
+        <div class="label"><i class="fa-solid fa-circle-check"></i>تایید شده</div>
+        <div class="value" id="kpiApproved">—</div>
+        <div class="hint"><span class="badge">وضعیت دوره</span><span class="muted">= تایید شده</span></div>
+      </div>
+
+      <div class="card kpi">
+        <div class="label"><i class="fa-solid fa-chalkboard-user"></i>تعداد اساتید</div>
+        <div class="value" id="kpiTeachers">—</div>
+      </div>
+
+      <div class="card kpi">
+        <div class="label"><i class="fa-solid fa-route"></i>تعداد کل مسیرها</div>
+        <div class="value" id="kpiPaths">—</div>
+        <div class="hint"><span class="muted">بر اساس داده فیلتر شده</span></div>
+      </div>
+
+      <!-- KPI مدیریتی جدید: Backlog -->
+      <div class="card kpi">
+        <div class="label"><i class="fa-solid fa-layer-group"></i>Backlog (در صف تولید)</div>
+        <div class="value" id="kpiBacklog">—</div>
+        <div class="hint"><span class="badge">ضبط + تدوین + پیشنهادی</span><span class="muted">برای کنترل گلوگاه</span></div>
+      </div>
+
+      <!-- === چارت‌های فعلی === -->
+      <div class="card chart">
+        <h3>وضعیت دوره‌ها (سهم/درصد)</h3>
+        <div class="chart-grid">
+          <div class="chart-canvas">
+            <canvas id="pieCourseStatus"></canvas>
+          </div>
+          <div class="chart-summary" id="sumCourseStatus"></div>
+        </div>
+      </div>
+
+      <div class="card chart">
+        <h3>وضعیت قراردادها (سهم/درصد)</h3>
+        <div class="chart-grid">
+          <div class="chart-canvas">
+            <canvas id="pieContractStatus"></canvas>
+          </div>
+          <div class="chart-summary" id="sumContractStatus"></div>
+        </div>
+      </div>
+
+      <div class="card chart trend">
+        <h3>روند شروع ضبط در ماه‌های مختلف</h3>
+        <div class="chart-grid">
+          <div class="chart-canvas">
+            <canvas id="ganttRecordingTimeline"></canvas>
+          </div>
+        </div>
+        <div class="trend-note" id="trendNote">—</div>
+      </div>
+
+      <!-- مسیرها × وضعیت (Top 8) -->
+      <div class="card chart wide-12">
+        <h3>وضعیت دوره‌ها به تفکیک مسیر تخصصی (Top 8)</h3>
+        <div class="chart-grid" style="grid-template-columns: 1fr;">
+          <div class="chart-canvas xl">
+            <canvas id="stackPathStatus"></canvas>
+          </div>
+        </div>
+        <div class="trend-note" id="pathStatusNote">—</div>
+      </div>
+
+      <!-- ورودی/خروجی ماهانه -->
+      <div class="card chart wide-12">
+        <h3>ورودی/خروجی ماهانه (شروع ضبط در برابر انتشار/برگزاری)</h3>
+        <div class="chart-grid" style="grid-template-columns: 1fr;">
+          <div class="chart-canvas tall">
+            <canvas id="lineInOutMonthly"></canvas>
+          </div>
+        </div>
+        <div class="trend-note" id="inOutNote">—</div>
+      </div>
+
+      <!-- حجم محتوا (با ID برای مخفی‌سازی) -->
+      <div class="card chart" id="cardHours">
+        <h3>حجم محتوا (ساعت) به تفکیک ماه</h3>
+        <div class="chart-grid" style="grid-template-columns: 1fr;">
+          <div class="chart-canvas">
+            <canvas id="barContentHoursMonthly"></canvas>
+          </div>
+        </div>
+        <div class="trend-note" id="hoursNote">—</div>
+      </div>
+
+      <!-- ۵ دوره جدید منتشر شده (با ID برای مخفی‌سازی) -->
+      <div class="card chart" id="cardLatestPublished">
+        <h3>۵ دوره جدید منتشر شده</h3>
+
+        <div class="chart-grid" style="grid-template-columns: 1fr;">
+          <div class="chart-canvas" style="height:auto; padding:12px;">
+            <div id="latestPublishedList" style="width:100%; display:flex; flex-direction:column; gap:10px;"></div>
+          </div>
+        </div>
+
+        <div class="trend-note" id="latestPublishedNote">—</div>
+      </div>
+
+      <!-- هشدارهای عملیاتی (با ID برای مخفی‌سازی) -->
+      <div class="card wide-12" id="cardAlerts">
+        <h3 style="margin:0 0 10px;font-size:14px;font-weight:900;">هشدار‌ها</h3>
+        <div class="alerts" id="alertsBox"></div>
+        <div class="trend-note" id="alertsNote">—</div>
+      </div>
+
+      <!-- جدول -->
+      <div class="card table-wrap">
+        <div class="table-top">
+          <div class="meta" id="tableMeta">—</div>
+          <div class="pager">
+            <select id="pageSize"></select>
+            <button class="btn secondary" id="prevPage">قبلی</button>
+            <button class="btn secondary" id="nextPage">بعدی</button>
+            <span id="pageInfo">—</span>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table id="tbl">
+            <thead><tr id="theadRow"></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </section>
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <script>
+    // ===============================
+    // Config
+    // ===============================
+   // ===============================
+    // Route-based config (NEW)
+    // ===============================
+    // برای لوکال: file:///.../dashboard.html#/ai یا file:///.../dashboard.html#/data  (بهتر برای file://)
+    // برای GitHub Pages: https://username.github.io/repo/ai  یا /data  (با 404.html)
+    function getRouteKey(){
+      const p = (location.pathname || "").toLowerCase();
+      const h = (location.hash || "").toLowerCase();
+
+      // هم pathname هم hash را چک می‌کنیم تا هم روی GitHub Pages کار کند هم روی file://
+      const full = p + " " + h;
+
+      if (full.includes("/ai") || full.includes("#/ai") || full.includes("#ai")) return "ai";
+      if (full.includes("/data") || full.includes("#/data") || full.includes("#data")) return "data";
+      return "ai"; // پیش‌فرض
+    }
+
+    const ROUTE = getRouteKey();
+
+    // چون همه در یک Spreadsheet هستند، فقط نام sheet/tab عوض می‌شود:
+    const SPREADSHEET_ID = "1aYhxTTY5gDC6I6QIxVNq1_6iVoVBdIlM-oe08CxNohE";
+
+    const CONFIG_BY_ROUTE = {
+      ai:   { name: "هوش مصنوعی" },  // دقیقاً اسم Tab
+      data: { name: "علوم داده" }    // دقیقاً اسم Tab
+      // اگر خواستید: "مدرسه علوم داده" و ... همینجا تنظیم کنید
+    };
+
+    const SCHOOL_CONFIG = CONFIG_BY_ROUTE[ROUTE] || CONFIG_BY_ROUTE.data;
+
+    // ===============================
+    // GViz URL (unchanged)
+    // ===============================
+    const GVIZ_URL =
+      `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?` +
+      `tqx=out:json&sheet=${encodeURIComponent(SCHOOL_CONFIG.name)}&rand=${Date.now()}`;
+
+    document.getElementById("dashboardTitle").textContent = `داشبورد دوره‌های ${SCHOOL_CONFIG.name}`;
+
+    const $ = (sel) => document.querySelector(sel);
+
+    const statusDot = $("#statusDot");
+    const statusText = $("#statusText");
+    const toast = $("#toast");
+
+    let RAW = { headers: [], data: [] };
+    let FILTERED = [];
+    let PAGE = 1;
+    let PAGE_SIZE = 10;
+    let DASH_UPDATED_AT = null;
+
+    let selectedPaths = [];
+    let PATH_OPTIONS = [];
+    const MASTER = { courseStatus: [], contractStatus: [] };
+
+    const COL = {
+      path: "مسیر تخصصی",
+      type: "نوع دوره",
+      courseStatus: "وضعیت دوره",
+      contractStatus: "وضعیت قرارداد",
+      paymentStatus: "وضعیت پرداخت",
+      title: "عنوان دوره",
+      teacher: "نام مدرس",
+      resume: "لینک رزومه و مشخصات مدرس"
+    };
+
+    const COL_MIN_WIDTH = {
+      [COL.title]: 340,
+      [COL.path]: 220,
+      [COL.type]: 170,
+      [COL.teacher]: 200
+    };
+
+    const BRAND = { blue:"#0095da", orange:"#ff4f00", deep:"#295cab" };
+
+    // ===============================
+    // Card show/hide helpers (NEW)
+    // ===============================
+    function hideCard(cardId){
+      const el = document.getElementById(cardId);
+      if (el) el.style.display = "none";
+    }
+    function showCard(cardId){
+      const el = document.getElementById(cardId);
+      if (el) el.style.display = "";
+    }
+
+    let PATH_RULES = [];
+    const PATH_COLOR_PALETTE = [
+      "#34D399", "#60A5FA", "#FBBF24", "#F472B6", "#A78BFA",
+      "#22C55E", "#38BDF8", "#FB7185", "#F59E0B", "#A3E635",
+      "#818CF8", "#2DD4BF"
+    ];
+
+    function escapeRegExp(str){
+      return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function buildDynamicPathRules(){
+      const paths = getAllUniquePaths().map(x => x.display);
+      PATH_RULES = paths.map((p, i) => ({
+        re: new RegExp(`^\\s*${escapeRegExp(p)}\\s*$`, "i"),
+        color: PATH_COLOR_PALETTE[i % PATH_COLOR_PALETTE.length]
+      }));
+    }
+
+    const COURSE_STATUS_RULES = [
+      { re: /منتشر/i,              color: "#22C55E" },
+      { re: /در\s*حال\s*ضبط/i,     color: "#A855F7" },
+      { re: /در\s*حال\s*تدوین/i,   color: "#3B82F6" },
+      { re: /پیشنهاد/i,            color: "#F59E0B" },
+      { re: /برگزار/i,             color: "#10B981" },
+      { re: /لغو|کنسل|متوقف/i,     color: "#EF4444" },
+    ];
+
+    const CONTRACT_STATUS_RULES = [
+      { re: /امضا/i,                 color: "#22C55E" },
+      { re: /بدون\s*قرارداد/i,        color: "#EF4444" },
+      { re: /پیش\s*نویس|ارسال/i,      color: "#F59E0B" },
+      { re: /در\s*حال\s*بررسی/i,      color: "#60A5FA" },
+    ];
+
+    function setStatus(type, text){
+      statusDot.className = "dot" + (type ? (" " + type) : "");
+      statusText.textContent = text;
+    }
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove("show"), 4200);
+    }
+
+    function escapeHtml(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    }
+
+    function isProbablyUrl(s){
+      return /^https?:\/\/\S+/i.test((s ?? "").trim());
+    }
+
+    function normKey(s){
+      return String(s ?? "")
+        .replace(/\u200c/g, " ")
+        .replace(/ي/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+    }
+
+    function parseGvizDateParts(v){
+      const s = String(v ?? "").trim();
+      const m = s.match(/^Date\(([-\d]+),([-\d]+),([-\d]+)(?:,([-\d]+),([-\d]+),([-\d]+))?/);
+      if (!m) return null;
+      return {
+        y: parseInt(m[1],10),
+        mo: parseInt(m[2],10),
+        d: parseInt(m[3],10),
+        h: parseInt(m[4] ?? "0",10),
+        mi: parseInt(m[5] ?? "0",10),
+        se: parseInt(m[6] ?? "0",10),
+      };
+    }
+
+    function pad2(n){ return String(n).padStart(2, "0"); }
+
+    function formatGvizDateYMD(v){
+      const p = parseGvizDateParts(v);
+      if (!p) return null;
+      const mm = p.mo + 1;
+      return `${p.y}/${pad2(mm)}/${pad2(p.d)}`;
+    }
+
+    function formatGvizDuration(v){
+      const p = parseGvizDateParts(v);
+      if (!p) return null;
+      const extraDays = Math.max(0, (p.d - 30));
+      const totalSeconds = (extraDays * 24 * 3600) + (p.h * 3600) + (p.mi * 60) + p.se;
+      const hh = Math.floor(totalSeconds / 3600);
+      const mm = Math.floor((totalSeconds % 3600) / 60);
+      const ss = totalSeconds % 60;
+      return `${hh}:${pad2(mm)}:${pad2(ss)}`;
+    }
+
+    function durationToSeconds(v){
+      if (String(v ?? "").trim().startsWith("Date(")){
+        const p = parseGvizDateParts(v);
+        if (!p) return 0;
+        const extraDays = Math.max(0, (p.d - 30));
+        return (extraDays * 24 * 3600) + (p.h * 3600) + (p.mi * 60) + p.se;
+      }
+      const s = String(v ?? "").trim();
+      const m = s.match(/^(\d+):(\d{1,2}):(\d{1,2})$/);
+      if (!m) return 0;
+      return (parseInt(m[1],10) * 3600) + (parseInt(m[2],10) * 60) + parseInt(m[3],10);
+    }
+
+    function getDateYMD(v){
+      const s = String(v ?? "").trim();
+      if (!s) return null;
+      if (s.startsWith("Date(")) return formatGvizDateYMD(s);
+      const m = s.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+      if (!m) return null;
+      return `${m[1]}/${pad2(parseInt(m[2],10))}/${pad2(parseInt(m[3],10))}`;
+    }
+
+    function splitPaths(cell){
+      const s = String(cell ?? "")
+        .replace(/\u200c/g, " ")
+        .replace(/ي/g, "ی")
+        .replace(/ك/g, "ک")
+        .trim();
+      if (!s) return [];
+      return s
+        .split(/(?:\s*(?:,|،|؛|;|\||\/|\n|\r)\s*|\s+و\s+|\s*&\s*)/g)
+        .map(x => x.trim())
+        .filter(Boolean);
+    }
+
+    function hexToRgb(hex){
+      const h = String(hex || "").replace("#","").trim();
+      if (h.length === 3){
+        const r = parseInt(h[0]+h[0], 16);
+        const g = parseInt(h[1]+h[1], 16);
+        const b = parseInt(h[2]+h[2], 16);
+        return {r,g,b};
+      }
+      if (h.length !== 6) return null;
+      const r = parseInt(h.slice(0,2), 16);
+      const g = parseInt(h.slice(2,4), 16);
+      const b = parseInt(h.slice(4,6), 16);
+      if ([r,g,b].some(x => Number.isNaN(x))) return null;
+      return {r,g,b};
+    }
+    function rgba(hex, a){
+      const rgb = hexToRgb(hex);
+      if (!rgb) return `rgba(255,255,255,${a})`;
+      return `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
+    }
+    function cellBg(color, strength){
+      const a = strength === "strong" ? 0.32 : strength === "mid" ? 0.24 : 0.18;
+      return rgba(color, a);
+    }
+
+    function pickColorByRules(value, rules, fallback){
+      const s = String(value ?? "").trim();
+      for (const r of rules){
+        if (r.re.test(s)) return r.color;
+      }
+      return fallback;
+    }
+
+    function uniqNormalized(values){
+      const m = new Map();
+      (values || []).forEach(v => {
+        const raw = String(v ?? "").trim();
+        if (!raw) return;
+        const k = normKey(raw);
+        if (!k) return;
+        if (!m.has(k)) m.set(k, raw);
+      });
+      return Array.from(m.values()).sort((a,b) => a.localeCompare(b, "fa"));
+    }
+
+    function buildMasterKeys(values, extra = []){
+      const m = new Map();
+      [...(values || []), ...(extra || [])].forEach(v => {
+        const raw = String(v ?? "").trim();
+        const disp = raw ? raw : "—";
+        const k = normKey(disp);
+        if (!m.has(k)) m.set(k, disp);
+      });
+      const dashK = normKey("—");
+      if (!m.has(dashK)) m.set(dashK, "—");
+      return Array.from(m.entries()).map(([kNorm, display]) => ({ kNorm, display }));
+    }
+
+    function countMapNorm(items, key){
+      const m = new Map();
+      (items || []).forEach(it => {
+        const raw = String(it[key] ?? "").trim();
+        const disp = raw ? raw : "—";
+        const k = normKey(disp);
+        m.set(k, (m.get(k) || 0) + 1);
+      });
+      return m;
+    }
+
+    function entriesFromMaster(masterArr, counts){
+      const out = masterArr.map(x => [x.display, counts.get(x.kNorm) || 0]);
+      out.sort((a,b) => (b[1]-a[1]) || a[0].localeCompare(b[0], "fa"));
+      return out;
+    }
+
+    function colMinWidthCss(h){
+      const w = COL_MIN_WIDTH[h];
+      return w ? `min-width:${w}px;` : "";
+    }
+
+    function buildSelect(selectEl, label, values){
+      const opts = [`همه‌ی ${label}`, ...values];
+      selectEl.innerHTML = opts.map(v => `<option>${escapeHtml(v)}</option>`).join("");
+    }
+
+    function getAllUniquePaths(){
+      const m = new Map();
+      RAW.data.forEach(row => {
+        splitPaths(row[COL.path]).forEach(p => {
+          const k = normKey(p);
+          if (!k) return;
+          if (!m.has(k)) m.set(k, p);
+        });
+      });
+      const arr = Array.from(m.entries()).map(([norm, display]) => ({norm, display}));
+      arr.sort((a,b) => a.display.localeCompare(b.display, "fa"));
+      return arr;
+    }
+
+    function updatePathButton(){
+      const count = selectedPaths.length;
+      $("#pathSelectedCount").textContent = count;
+
+      if (count === 0){
+        $("#pathSelectedText").textContent = "همه مسیرها";
+        return;
+      }
+
+      const selectedDisplays = selectedPaths
+        .map(n => PATH_OPTIONS.find(x => x.norm === n)?.display)
+        .filter(Boolean);
+
+      const compact = selectedDisplays.length <= 2
+        ? selectedDisplays.join("، ")
+        : `${selectedDisplays.slice(0,2).join("، ")} و ${selectedDisplays.length - 2} مورد دیگر`;
+
+      $("#pathSelectedText").textContent = compact || `${count} مسیر انتخاب شده`;
+    }
+
+    function buildPathDropdown(){
+      PATH_OPTIONS = getAllUniquePaths();
+      const list = $("#pathCheckboxList");
+
+      list.innerHTML = PATH_OPTIONS.map((opt, i) => {
+        const checked = selectedPaths.includes(opt.norm) ? "checked" : "";
+        return `
+          <li class="path-checkbox-item" data-cb="path-cb-${i}">
+            <input type="checkbox" id="path-cb-${i}" data-value="${opt.norm}" ${checked}>
+            <label for="path-cb-${i}">${escapeHtml(opt.display)}</label>
+          </li>`;
+      }).join("");
+
+      list.querySelectorAll(".path-checkbox-item").forEach(li => {
+        li.addEventListener("click", (e) => {
+          const id = li.getAttribute("data-cb");
+          const cb = document.getElementById(id);
+          if (!cb) return;
+          if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "LABEL")) return;
+          cb.checked = !cb.checked;
+          cb.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+      });
+
+      list.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", () => {
+          const val = cb.dataset.value;
+          if (cb.checked) {
+            if (!selectedPaths.includes(val)) selectedPaths.push(val);
+          } else {
+            selectedPaths = selectedPaths.filter(p => p !== val);
+          }
+          updatePathButton();
+          applyFilters();
+        });
+      });
+
+      updatePathButton();
+    }
+
+    function closePathDropdown(){
+      $("#pathDropdown").classList.remove("open");
+      $("#pathDropdownButton").setAttribute("aria-expanded", "false");
+    }
+    function openPathDropdown(){
+      $("#pathDropdown").classList.add("open");
+      $("#pathDropdownButton").setAttribute("aria-expanded", "true");
+      $("#pathSearchInput").focus();
+    }
+    function togglePathDropdown(){
+      const dd = $("#pathDropdown");
+      if (dd.classList.contains("open")) closePathDropdown();
+      else openPathDropdown();
+    }
+
+    $("#pathDropdownButton").addEventListener("click", (e) => {
+      e.stopPropagation();
+      togglePathDropdown();
+    });
+
+    document.addEventListener("click", (e) => {
+      const dd = $("#pathDropdown");
+      if (!dd.classList.contains("open")) return;
+      if ($("#pathDropdownButton").contains(e.target)) return;
+      if (dd.contains(e.target)) return;
+      closePathDropdown();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePathDropdown();
+    });
+
+    $("#pathSearchInput").addEventListener("input", (e) => {
+      const query = normKey(e.target.value);
+      $("#pathCheckboxList").querySelectorAll(".path-checkbox-item").forEach(item => {
+        const label = item.querySelector("label").textContent;
+        item.classList.toggle("hidden", query ? !normKey(label).includes(query) : false);
+      });
+    });
+
+    $("#pathClearAll").addEventListener("click", () => {
+      selectedPaths = [];
+      $("#pathCheckboxList").querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+      $("#pathSearchInput").value = "";
+      $("#pathCheckboxList").querySelectorAll(".path-checkbox-item").forEach(item => item.classList.remove("hidden"));
+      updatePathButton();
+      applyFilters();
+    });
+
+    function buildPageSize(){
+      const sizes = [10, 20, 50, 100];
+      const sel = $("#pageSize");
+      sel.innerHTML = sizes.map(n => `<option value="${n}">${n.toLocaleString("fa-IR")} ردیف</option>`).join("");
+      sel.value = String(PAGE_SIZE);
+
+      if (!sel.dataset.bound) {
+        sel.addEventListener("change", () => {
+          PAGE_SIZE = parseInt(sel.value, 10) || 10;
+          PAGE = 1;
+          renderTable();
+        });
+        sel.dataset.bound = "1";
+      }
+    }
+
+    function buildFilters(){
+      buildSelect($("#fType"), "نوع دوره", uniqNormalized(RAW.data.map(r => r[COL.type])));
+      buildSelect($("#fStatus"), "وضعیت دوره", uniqNormalized(RAW.data.map(r => r[COL.courseStatus])));
+      buildSelect($("#fContract"), "وضعیت قرارداد", uniqNormalized(RAW.data.map(r => r[COL.contractStatus])));
+      buildSelect($("#fPayment"), "وضعیت پرداخت", uniqNormalized(RAW.data.map(r => r[COL.paymentStatus])));
+      buildPathDropdown();
+    }
+
+    function rowMatchesPaths(row){
+      if (selectedPaths.length === 0) return true;
+      const cellPathsNorm = splitPaths(row[COL.path]).map(normKey);
+      return selectedPaths.every(p => cellPathsNorm.includes(p));
+    }
+
+    function applyFilters(){
+      const q = ($("#q").value || "").trim().toLowerCase();
+
+      const selType = normKey($("#fType").value);
+      const selStatus = normKey($("#fStatus").value);
+      const selContract = normKey($("#fContract").value);
+      const selPayment = normKey($("#fPayment").value);
+
+      FILTERED = RAW.data.filter(r => {
+        const pathMatch = rowMatchesPaths(r);
+
+        const typeMatch = ($("#fType").value === "همه‌ی نوع دوره" || normKey(r[COL.type]) === selType);
+        const statusMatch = ($("#fStatus").value === "همه‌ی وضعیت دوره" || normKey(r[COL.courseStatus]) === selStatus);
+        const contractMatch = ($("#fContract").value === "همه‌ی وضعیت قرارداد" || normKey(r[COL.contractStatus]) === selContract);
+        const paymentMatch = ($("#fPayment").value === "همه‌ی وضعیت پرداخت" || normKey(r[COL.paymentStatus]) === selPayment);
+
+        let match = pathMatch && typeMatch && statusMatch && contractMatch && paymentMatch;
+
+        if (q) {
+          const hay = Object.values(r).join(" ").toLowerCase();
+          match = match && hay.includes(q);
+        }
+        return match;
+      });
+
+      PAGE = 1;
+      computeKPIs(FILTERED);
+      renderCharts(FILTERED);
+      renderTable();
+    }
+
+    function computeKPIs(dataset = FILTERED){
+      const rows = Array.isArray(dataset) ? dataset : [];
+      const norm = (s) => normKey(s);
+      const statuses = rows.map(r => norm(r[COL.courseStatus]));
+
+      const isPublished = (st) => st.includes("منتشر") || st.includes("انتشار");
+      const isRunning   = (st) => st.includes("برگزار");
+      const isRecording = (st) => st === "در حال ضبط";
+      const isEditing   = (st) => st === "در حال تدوین";
+      const isProposed  = (st) => st.includes("پیشنهاد");
+      const isUnderReview = (st) =>
+        st.includes("در حال بررسی") ||
+        st.includes("در انتظار بررسی") ||
+        st === "بررسی";
+
+      const runOrPublished   = statuses.filter(st => isRunning(st) || isPublished(st)).length;
+      const recording        = statuses.filter(st => isRecording(st)).length;
+      const editing          = statuses.filter(st => isEditing(st)).length;
+      const proposedOrReview = statuses.filter(st => isProposed(st) || isUnderReview(st)).length;
+
+      const approved = rows.filter(r => {
+        const st = norm(r[COL.courseStatus] || "");
+        return (st.includes("تایید") || st.includes("تأیید")) && !(st.includes("عدم") || st.includes("رد"));
+      }).length;
+
+      $("#kpiRunOrPublished").textContent = runOrPublished.toLocaleString("fa-IR");
+      $("#kpiRecording").textContent = recording.toLocaleString("fa-IR");
+      $("#kpiEditing").textContent = editing.toLocaleString("fa-IR");
+      $("#kpiProposedOrReview").textContent = proposedOrReview.toLocaleString("fa-IR");
+      $("#kpiApproved").textContent = approved.toLocaleString("fa-IR");
+
+      const teacherSet = new Set(
+        rows
+          .map(r => norm(r[COL.teacher]))
+          .filter(x => x && x !== "—")
+      );
+      $("#kpiTeachers").textContent = teacherSet.size.toLocaleString("fa-IR");
+
+      const pathSet = new Set();
+      rows.forEach(r => {
+        splitPaths(r[COL.path]).forEach(p => {
+          const k = norm(p);
+          if (k && k !== "—") pathSet.add(k);
+        });
+      });
+      $("#kpiPaths").textContent = pathSet.size.toLocaleString("fa-IR");
+
+      const backlog = recording + editing + proposedOrReview;
+      $("#kpiBacklog").textContent = backlog.toLocaleString("fa-IR");
+
+      const d = DASH_UPDATED_AT || new Date();
+      $("#kpiUpdated").textContent = d.toLocaleString("fa-IR");
+    }
+
+    Chart.defaults.font.family = '"IRANSans", "IRANSansWeb", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial';
+    Chart.defaults.font.weight = "700";
+    Chart.defaults.color = "rgba(242,247,255,.80)";
+
+    let CHART_COURSE = null;
+    let CHART_CONTRACT = null;
+    let CHART_GANTT = null;
+
+    let CHART_PATH_STACK = null;
+    let CHART_INOUT = null;
+    let CHART_HOURS = null;
+
+    function topN(entries, n=6){
+      const arr = (entries || []).filter(x => x && x[0] && x[1] > 0);
+      const head = arr.slice(0, n);
+      const tail = arr.slice(n);
+      if (tail.length === 0) return head;
+      const otherSum = tail.reduce((a,b) => a + (b[1] || 0), 0);
+      return [...head, ["سایر", otherSum]];
+    }
+
+    function buildDoughnutData(entries, rulesForColor){
+      const filtered = (entries || [])
+        .filter(([k,v]) => String(k).trim() !== "—" && v > 0);
+
+      const slim = topN(filtered, 6);
+      const labels = slim.map(x => x[0]);
+      const values = slim.map(x => x[1]);
+
+      const colors = slim.map(([k]) => pickColorByRules(k, rulesForColor || [], BRAND.deep));
+      return { labels, values, colors, raw: filtered };
+    }
+
+    function renderSummary(containerEl, rawEntries, colorRules = []){
+      const el = (typeof containerEl === "string") ? $(containerEl) : containerEl;
+
+      const entries = (rawEntries || [])
+        .slice()
+        .filter(([k,v]) => String(k).trim() !== "—" && v > 0);
+
+      const total = entries.reduce((a,b) => a + (b[1] || 0), 0) || 1;
+      const view = topN(entries, 5);
+
+      el.innerHTML = view.map(([k,v]) => {
+        const pct = Math.round((v / total) * 100);
+        const c = pickColorByRules(k, colorRules, BRAND.deep);
+
+        return `
+          <div class="summary-row"
+               style="
+                 border-color: ${rgba(c, .35)};
+                 box-shadow: inset 0 0 0 999px ${rgba(c, .10)};
+               ">
+            <div class="name" style="display:flex;align-items:center;gap:10px;">
+              <span style="
+                width:10px;height:10px;border-radius:999px;
+                background:${c};
+                box-shadow: 0 0 0 4px ${rgba(c,.18)};
+                flex:0 0 auto;
+              "></span>
+              <span>${escapeHtml(k)}</span>
+            </div>
+
+            <div class="val" style="color:${c}; font-weight:950;">
+              ${v.toLocaleString("fa-IR")}
+            </div>
+
+            <div class="pct" style="color:${rgba(c,.95)}; font-weight:900;">
+              ${pct}%
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function ensureDoughnutChart(canvasId, chartRef, dataObj){
+      const el = document.getElementById(canvasId);
+      if (!el) return null;
+
+      const ctx = el.getContext("2d");
+      if (chartRef){
+        chartRef.data.labels = dataObj.labels;
+        chartRef.data.datasets[0].data = dataObj.values;
+        chartRef.data.datasets[0].backgroundColor = dataObj.colors;
+        chartRef.update();
+        return chartRef;
+      }
+
+      return new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: dataObj.labels,
+          datasets: [{
+            data: dataObj.values,
+            backgroundColor: dataObj.colors,
+            borderColor: "rgba(255,255,255,.12)",
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "62%",
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context){
+                  const v = context.parsed || 0;
+                  const total = dataObj.values.reduce((a,b) => a + b, 0) || 1;
+                  const pct = Math.round((v / total) * 100);
+                  return ` ${context.label}: ${v.toLocaleString("fa-IR")} (${pct}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    const MONTH_NAME_BY_IDX = new Map([
+      [1,"فروردین"], [2,"اردیبهشت"], [3,"خرداد"],
+      [4,"تیر"], [5,"مرداد"], [6,"شهریور"],
+      [7,"مهر"], [8,"آبان"], [9,"آذر"],
+      [10,"دی"], [11,"بهمن"], [12,"اسفند"],
+    ]);
+
+    const SEASON_BANDS = [
+      { name:"بهار",   from:1,  to:3,  color:"rgba(244,114,182,.18)" },
+      { name:"تابستان",from:4,  to:6,  color:"rgba(52,211,153,.16)" },
+      { name:"پاییز",  from:7,  to:9,  color:"rgba(251,191,36,.16)" },
+      { name:"زمستان", from:10, to:12, color:"rgba(147,197,253,.14)" },
+    ];
+
+    const COURSE_COLOR_PALETTE = [
+      "#A78BFA", "#60A5FA", "#34D399", "#FBBF24", "#F472B6", "#FB7185",
+      "#22C55E", "#38BDF8", "#818CF8", "#2DD4BF", "#F97316", "#A3E635",
+      "#E879F9", "#93C5FD", "#FCA5A5", "#86EFAC", "#FDE047", "#C4B5FD"
+    ];
+
+    function hashToIndex(str, mod){
+      const s = String(str || "");
+      let h = 0;
+      for (let i=0; i<s.length; i++){
+        h = (h * 31 + s.charCodeAt(i)) >>> 0;
+      }
+      return mod ? (h % mod) : 0;
+    }
+
+    function colorForCourse(title){
+      const idx = hashToIndex(normKey(title), COURSE_COLOR_PALETTE.length);
+      return COURSE_COLOR_PALETTE[idx];
+    }
+
+    function getMonthFromYMD(ymd){
+      if (!ymd) return null;
+      const p = String(ymd).split("/");
+      if (p.length < 2) return null;
+      const m = parseInt(p[1],10);
+      return Number.isFinite(m) ? m : null;
+    }
+
+    function findHeaderByAliases(aliases){
+      const hs = RAW.headers || [];
+      const aliasNorm = (aliases || []).map(normKey);
+      return hs.find(h => aliasNorm.includes(normKey(h))) || null;
+    }
+
+    function buildRecordingTimeline(rows){
+      const startCol = findHeaderByAliases([
+        "تاریخ شروع ضبط","تاريخ شروع ضبط","شروع ضبط","تاریخ شروع فیلمبرداری"
+      ]);
+      const endCol = findHeaderByAliases([
+        "تاریخ پایان ضبط","تاريخ پایان ضبط","پایان ضبط","تاریخ پایان فیلمبرداری"
+      ]);
+
+      if (!startCol){
+        return { items: [], note: `ستون «تاریخ شروع ضبط» در شیت پیدا نشد.` };
+      }
+
+      const items = [];
+      rows.forEach(r => {
+        const title = String(r[COL.title] ?? "").trim() || "—";
+        const sYMD = getDateYMD(r[startCol]);
+        if (!sYMD) return;
+
+        const sm = getMonthFromYMD(sYMD);
+        if (!sm || sm < 1 || sm > 12) return;
+
+        let em = null;
+        if (endCol){
+          const eYMD = getDateYMD(r[endCol]);
+          const mm = getMonthFromYMD(eYMD);
+          if (mm && mm >= 1 && mm <= 12) em = mm;
+        }
+
+        const start = sm;
+        const end = em ? Math.max(em, sm) : (sm + 0.45);
+
+        items.push({
+          name: title,
+          startMonthIdx: start,
+          endMonthIdx: end,
+          startYMD: sYMD
+        });
+      });
+
+      if (items.length === 0){
+        return { items: [], note: `در ستون «تاریخ شروع ضبط» تاریخ معتبری برای رسم نمودار وجود ندارد.` };
+      }
+
+      items.sort((a,b) => (a.startMonthIdx - b.startMonthIdx) || a.name.localeCompare(b.name,"fa"));
+
+      const MAX_SHOW = 18;
+      const sliced = items.slice(0, MAX_SHOW);
+      const note = "";
+
+      return { items: sliced, note, startCol, endCol };
+    }
+
+    const SeasonFooterPlugin = {
+      id: "seasonFooter",
+      afterDraw(chart){
+        if (chart?.canvas?.id !== "ganttRecordingTimeline") return;
+
+        const { ctx, chartArea, scales } = chart;
+        if (!chartArea || !scales?.x) return;
+
+        const x = scales.x;
+        ctx.save();
+
+        const bandTop = chartArea.bottom + 8;
+        const bandHeight = 26;
+
+        SEASON_BANDS.forEach(b => {
+          const x1 = x.getPixelForValue(b.from);
+          const x2 = x.getPixelForValue(b.to + 1e-6);
+          const left = Math.min(x1, x2);
+          const right = Math.max(x1, x2);
+
+          ctx.fillStyle = b.color;
+          ctx.fillRect(left, bandTop, (right - left), bandHeight);
+
+          const mid = left + (right - left) / 2;
+          ctx.fillStyle = "rgba(242,247,255,.82)";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.font = `900 12px "IRANSans","IRANSansWeb",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial`;
+          ctx.fillText(b.name, mid, bandTop + bandHeight/2);
+        });
+
+        ctx.restore();
+      }
+    };
+
+    Chart.register(SeasonFooterPlugin);
+
+    function ensureGanttSeasonChart(canvasId, chartRef, timeline){
+      const el = document.getElementById(canvasId);
+      if (!el) return null;
+
+      const ctx = el.getContext("2d");
+      const items = timeline.items || [];
+      const labels = items.map(x => x.name);
+
+      const dataBars = items.map((x, idx) => ({
+        x: [x.startMonthIdx, x.endMonthIdx],
+        y: idx
+      }));
+
+      const colors = items.map(x => colorForCourse(x.name));
+
+      const data = {
+        labels,
+        datasets: [{
+          label: "بازه ضبط",
+          data: dataBars,
+          backgroundColor: colors,
+          borderColor: "rgba(255,255,255,.18)",
+          borderWidth: 1,
+          borderSkipped: false,
+          borderRadius: 10,
+          barPercentage: 0.85,
+          categoryPercentage: 0.9
+        }]
+      };
+
+      const options = {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 10, bottom: 44 } },
+        scales: {
+          x: {
+            type: "linear",
+            min: 1,
+            max: 12,
+            grid: { color: "rgba(255,255,255,.06)" },
+            ticks: {
+              stepSize: 1,
+              padding: 40,
+              color: "rgba(242,247,255,.80)",
+              callback: function(value){
+                const m = Math.round(Number(value));
+                if (m < 1 || m > 12) return "";
+                return MONTH_NAME_BY_IDX.get(m) || String(m);
+              }
+            }
+          },
+          y: {
+            grid: { display: false },
+            ticks: {
+              color: "rgba(242,247,255,.80)",
+              callback: function(value){
+                const idx = Number(value);
+                const name = labels[idx] || "";
+                return name.length > 28 ? (name.slice(0, 28) + "…") : name;
+              }
+            }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => {
+                const i = items?.[0]?.raw?.y ?? 0;
+                return labels[i] || "";
+              },
+              label: (context) => {
+                const i = context.raw?.y ?? 0;
+                const it = items[i];
+                if (!it) return "";
+                const sName = MONTH_NAME_BY_IDX.get(Math.round(it.startMonthIdx)) || String(it.startMonthIdx);
+                const eName = MONTH_NAME_BY_IDX.get(Math.round(it.endMonthIdx)) || String(it.endMonthIdx);
+                return ` شروع: ${sName} — پایان: ${eName}`;
+              }
+            }
+          }
+        }
+      };
+
+      if (chartRef){
+        chartRef.data = data;
+        chartRef.options = options;
+        chartRef.update();
+        return chartRef;
+      }
+
+      return new Chart(ctx, { type: "bar", data, options });
+    }
+
+    function jalaliToGregorian(jy, jm, jd){
+      jy = parseInt(jy,10); jm = parseInt(jm,10); jd = parseInt(jd,10);
+      let gy;
+      if (jy > 979) { gy = 1600; jy -= 979; }
+      else { gy = 621; }
+
+      let days = (365 * jy) + Math.floor(jy / 33) * 8 + Math.floor(((jy % 33) + 3) / 4);
+      for (let i = 1; i < jm; ++i){
+        days += (i <= 6) ? 31 : 30;
+      }
+      days += (jd - 1);
+
+      gy += 400 * Math.floor(days / 146097);
+      days %= 146097;
+
+      if (days > 36524){
+        gy += 100 * Math.floor(--days / 36524);
+        days %= 36524;
+        if (days >= 365) days++;
+      }
+
+      gy += 4 * Math.floor(days / 1461);
+      days %= 1461;
+
+      if (days > 365){
+        gy += Math.floor((days - 1) / 365);
+        days = (days - 1) % 365;
+      }
+
+      const gd = days + 1;
+      const sal_a = [0,31, (isLeap(gy)?29:28),31,30,31,30,31,31,30,31,30,31];
+
+      let gm = 0, dayCount = gd;
+      for (gm = 1; gm <= 12; gm++){
+        if (dayCount <= sal_a[gm]) break;
+        dayCount -= sal_a[gm];
+      }
+      return { gy, gm, gd: dayCount };
+
+      function isLeap(y){
+        return ((y%4===0 && y%100!==0) || (y%400===0));
+      }
+    }
+
+    function parseJalaliYMD(ymd){
+      const s = String(ymd ?? "").trim();
+      const m = s.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+      if (!m) return null;
+      return { jy: parseInt(m[1],10), jm: parseInt(m[2],10), jd: parseInt(m[3],10) };
+    }
+
+    function jalaliYmdToDate(ymd){
+      const p = parseJalaliYMD(ymd);
+      if (!p) return null;
+      const g = jalaliToGregorian(p.jy, p.jm, p.jd);
+      return new Date(g.gy, g.gm - 1, g.gd, 12, 0, 0);
+    }
+
+    function diffDays(a, b){
+      const ms = (a.getTime() - b.getTime());
+      return Math.floor(ms / (24*3600*1000));
+    }
+
+    function ensureChart(canvasId, chartRef, cfg){
+      const el = document.getElementById(canvasId);
+      if (!el) return null;
+      const ctx = el.getContext("2d");
+
+      if (chartRef){
+        chartRef.destroy();
+      }
+      return new Chart(ctx, cfg);
+    }
+
+    function monthLabels(){
+      return Array.from({length:12}, (_,i) => MONTH_NAME_BY_IDX.get(i+1));
+    }
+
+    function statusBucket(normStatus){
+      const st = String(normStatus || "");
+      if (st.includes("منتشر") || st.includes("انتشار") || st.includes("برگزار")) return "خروجی";
+      if (st === "در حال ضبط") return "ضبط";
+      if (st === "در حال تدوین") return "تدوین";
+      if (st.includes("پیشنهاد") || st.includes("بررسی")) return "پیشنهادی/بررسی";
+      if (st.includes("لغو") || st.includes("کنسل") || st.includes("متوقف")) return "لغو/متوقف";
+      return "سایر";
+    }
+
+    function buildMonthlyCounts(rows, dateCol){
+      const arr = Array.from({length:12}, () => 0);
+      if (!dateCol) return arr;
+
+      rows.forEach(r => {
+        const ymd = getDateYMD(r[dateCol]);
+        const m = getMonthFromYMD(ymd);
+        if (m && m >= 1 && m <= 12) arr[m-1] += 1;
+      });
+      return arr;
+    }
+
+    function buildMonthlyHours(rows, dateCol, durationCol){
+      const arr = Array.from({length:12}, () => 0);
+      if (!dateCol || !durationCol) return arr;
+
+      rows.forEach(r => {
+        const ymd = getDateYMD(r[dateCol]);
+        const m = getMonthFromYMD(ymd);
+        if (!m || m < 1 || m > 12) return;
+        const sec = durationToSeconds(r[durationCol]);
+        arr[m-1] += (sec / 3600);
+      });
+      return arr;
+    }
+
+    function buildAlerts(rows, timelineInfo){
+      const alerts = [];
+      const startCol = timelineInfo?.startCol || findHeaderByAliases(["تاریخ شروع ضبط","تاريخ شروع ضبط","شروع ضبط"]);
+
+      const a1 = rows.filter(r => normKey(r[COL.courseStatus]) === "در حال ضبط" && normKey(r[COL.contractStatus]).includes("بدون قرارداد")).length;
+      if (a1) alerts.push({ level:"ریسک بالا", color:"#EF4444", text:`${a1.toLocaleString("fa-IR")} دوره «در حال ضبط» بدون قرارداد ثبت شده است.` });
+
+      if (startCol){
+        const now = new Date();
+        let longEdit = 0;
+        rows.forEach(r => {
+          const st = normKey(r[COL.courseStatus]);
+          if (st !== "در حال تدوین") return;
+          const ymd = getDateYMD(r[startCol]);
+          const d = jalaliYmdToDate(ymd);
+          if (!d) return;
+          const days = diffDays(now, d);
+          if (days > 60) longEdit++;
+        });
+        if (longEdit) alerts.push({ level:"گلوگاه تدوین", color:"#F59E0B", text:`${longEdit.toLocaleString("fa-IR")} دوره بیش از ۶۰ روز از شروع ضبط در وضعیت «تدوین» مانده است.` });
+      }
+
+      const payBad = rows.filter(r => {
+        const pn = normKey(r[COL.paymentStatus]);
+        return pn.includes("مشکل") || pn.includes("رد") || pn.includes("ناموفق") || pn.includes("بدهی") || pn.includes("تأخیر");
+      }).length;
+      if (payBad) alerts.push({ level:"ریسک مالی", color:"#EF4444", text:`${payBad.toLocaleString("fa-IR")} مورد با وضعیت پرداخت «مشکل‌دار/تأخیری» مشاهده شد.` });
+
+      if (!alerts.length){
+        alerts.push({ level:"OK", color:"#22C55E", text:`در داده فیلتر شده هشدار بحرانی شناسایی نشد.` });
+      }
+      return alerts.slice(0, 6);
+    }
+
+    function renderPathStack(rows){
+      const bucketKeys = uniqNormalized(rows.map(r => r[COL.courseStatus])).filter(x => x && x !== "—");
+      const bucketColors = Object.fromEntries(bucketKeys.map(k => [k, pickColorByRules(k, COURSE_STATUS_RULES, "#60A5FA")]));
+
+      const pathMap = new Map();
+      rows.forEach(r => {
+        const paths = splitPaths(r[COL.path]);
+        if (!paths.length) paths.push("—");
+        const st = String(r[COL.courseStatus] ?? "").trim() || "—";
+        paths.forEach(p => {
+          const key = p.trim() || "—";
+          if (!pathMap.has(key)){
+            const obj = {};
+            bucketKeys.forEach(k => obj[k]=0);
+            pathMap.set(key, obj);
+          }
+          pathMap.get(key)[st] = (pathMap.get(key)[st] || 0) + 1;
+        });
+      });
+
+      const arr = Array.from(pathMap.entries()).map(([name, obj]) => ({
+        name,
+        total: bucketKeys.reduce((a,k)=>a+(obj[k]||0),0),
+        obj
+      }));
+      arr.sort((a,b)=> b.total - a.total);
+
+      const top = arr.filter(x => x.name !== "—").slice(0, 8);
+      const labels = top.map(x => x.name);
+
+      const datasets = bucketKeys.map(k => ({
+        label: k,
+        data: top.map(x => x.obj[k] || 0),
+        backgroundColor: bucketColors[k],
+        borderColor: "rgba(255,255,255,.12)",
+        borderWidth: 1,
+        borderRadius: 10,
+      }));
+
+      CHART_PATH_STACK = ensureChart("stackPathStatus", CHART_PATH_STACK, {
+        type:"bar",
+        data:{ labels, datasets },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{
+            legend:{ position:"top", labels:{ boxWidth:10, boxHeight:10 } },
+            tooltip:{ callbacks:{ label:(ctx)=> ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString("fa-IR")}` } }
+          },
+          scales:{
+            x:{
+              stacked:true,
+              grid:{ display:false },
+              ticks:{
+                color:"rgba(242,247,255,.86)",
+                callback:function(v){
+                  const t = labels[v] || "";
+                  return t.length > 14 ? (t.slice(0,14)+"…") : t;
+                }
+              }
+            },
+            y:{ stacked:true, grid:{ color:"rgba(255,255,255,.06)" }, ticks:{ precision:0 } }
+          }
+        }
+      });
+
+      $("#pathStatusNote").textContent =
+        top.length ? `نمایش Top ${top.length.toLocaleString("fa-IR")} مسیر بر اساس حجم داده فیلتر شده.` : "داده کافی برای نمایش مسیرها وجود ندارد.";
+    }
+
+    function renderInOutMonthly(rows, timelineInfo){
+      const startCol = timelineInfo?.startCol || findHeaderByAliases(["تاریخ شروع ضبط","تاريخ شروع ضبط","شروع ضبط"]);
+
+      const publishCol = findHeaderByAliases([
+        "تاریخ انتشار","تاريخ انتشار","تاریخ برگزاری","تاريخ برگزاری","تاریخ اتمام","تاريخ اتمام","تاریخ پایان"
+      ]);
+
+      const inArr  = buildMonthlyCounts(rows, startCol);
+      let outArr = null;
+
+      if (publishCol){
+        const outRows = rows.filter(r => statusBucket(normKey(r[COL.courseStatus])) === "خروجی");
+        outArr = buildMonthlyCounts(outRows, publishCol);
+      } else {
+        outArr = Array.from({length:12}, () => 0);
+      }
+
+      CHART_INOUT = ensureChart("lineInOutMonthly", CHART_INOUT, {
+        type:"line",
+        data:{
+          labels: monthLabels(),
+          datasets:[
+            {
+              label:"شروع ضبط (ورودی)",
+              data: inArr,
+              tension: .35,
+              borderColor: "#A855F7",
+              backgroundColor: rgba("#A855F7", .12),
+              fill:true,
+              pointRadius: 3
+            },
+            {
+              label:"انتشار/برگزاری (خروجی)",
+              data: outArr,
+              tension: .35,
+              borderColor: "#22C55E",
+              backgroundColor: rgba("#22C55E", .10),
+              fill:true,
+              pointRadius: 3
+            }
+          ]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{
+            legend:{ position:"top" },
+            tooltip:{ callbacks:{ label:(ctx)=> ` ${ctx.dataset.label}: ${ctx.parsed.y.toLocaleString("fa-IR")}` } }
+          },
+          scales:{
+            x:{ grid:{ display:false } },
+            y:{ grid:{ color:"rgba(255,255,255,.06)" }, ticks:{ precision:0 } }
+          }
+        }
+      });
+
+      const hasOut = !!publishCol;
+      $("#inOutNote").textContent = hasOut
+        ? `ورودی از «${startCol}» و خروجی از «${publishCol}» محاسبه شد.`
+        : `خروجی: ستون تاریخ انتشار/برگزاری یافت نشد؛ فقط ورودی (شروع ضبط) نمایش داده می‌شود.`;
+    }
+
+    // ===============================
+    // renderHours (UPDATED: hide if no data)
+    // ===============================
+    function renderHours(rows, timelineInfo){
+      const durationCol = findHeaderByAliases(["مدت زمان کل","مدت کل","مدت زمان","زمان کل","Duration"]);
+      const publishCol  = findHeaderByAliases(["تاریخ انتشار","تاريخ انتشار","تاریخ برگزاری","تاريخ برگزاری"]);
+      const startCol    = timelineInfo?.startCol || findHeaderByAliases(["تاریخ شروع ضبط","تاريخ شروع ضبط","شروع ضبط"]);
+
+      const basisCol = publishCol || startCol;
+
+      // اگر ستون‌های لازم نیست، کارت کلاً پنهان شود
+      if (!durationCol || !basisCol){
+        hideCard("cardHours");
+        return;
+      }
+
+      const hours = buildMonthlyHours(rows, basisCol, durationCol);
+      const hasAnyHours = (hours || []).some(x => Math.abs(x) > 1e-9);
+
+      // اگر همه ماه‌ها صفر است، کارت را پنهان کن
+      if (!hasAnyHours){
+        hideCard("cardHours");
+        return;
+      } else {
+        showCard("cardHours");
+      }
+
+      CHART_HOURS = ensureChart("barContentHoursMonthly", CHART_HOURS, {
+        type:"bar",
+        data:{
+          labels:monthLabels(),
+          datasets:[{
+            label:"ساعت محتوا",
+            data: hours.map(x => Math.round(x*10)/10),
+            backgroundColor:"#38BDF8",
+            borderColor:"rgba(255,255,255,.14)",
+            borderWidth:1,
+            borderRadius:12
+          }]
+        },
+        options:{
+          responsive:true,
+          maintainAspectRatio:false,
+          plugins:{
+            legend:{ display:false },
+            tooltip:{ callbacks:{ label:(ctx)=> ` ${ctx.parsed.y.toLocaleString("fa-IR")} ساعت` } }
+          },
+          scales:{
+            x:{ grid:{ display:false } },
+            y:{ grid:{ color:"rgba(255,255,255,.06)" } }
+          }
+        }
+      });
+
+      $("#hoursNote").textContent = "";
+    }
+
+    function isPublishedStatus(stNorm){
+      return stNorm.includes("منتشر") || stNorm.includes("انتشار") || stNorm.includes("برگزار");
+    }
+
+    function pickBestPublishDateCol(){
+      return findHeaderByAliases([
+        "تاریخ انتشار","تاريخ انتشار",
+        "تاریخ برگزاری","تاريخ برگزاری",
+        "تاریخ اتمام","تاريخ اتمام",
+        "تاریخ پایان","تاريخ پایان"
+      ]);
+    }
+
+    function pickStartRecordingDateCol(timelineInfo){
+      return timelineInfo?.startCol || findHeaderByAliases([
+        "تاریخ شروع ضبط","تاريخ شروع ضبط","شروع ضبط","تاریخ شروع فیلمبرداری"
+      ]);
+    }
+
+    // ===============================
+    // renderLatestPublished (UPDATED: hide if no data)
+    // ===============================
+    function renderLatestPublished(rows, timelineInfo){
+      const listEl = $("#latestPublishedList");
+      const noteEl = $("#latestPublishedNote");
+      if (!listEl || !noteEl) return;
+
+      const publishCol = pickBestPublishDateCol();
+      const startCol = pickStartRecordingDateCol(timelineInfo);
+      const dateCol = publishCol || startCol;
+
+      // اگر ستون تاریخ نداریم -> کارت را پنهان
+      if (!dateCol){
+        hideCard("cardLatestPublished");
+        return;
+      }
+
+      const publishedRows = (rows || []).filter(r => isPublishedStatus(normKey(r[COL.courseStatus])));
+
+      const items = publishedRows.map(r => {
+        const title = String(r[COL.title] ?? "").trim() || "—";
+        const teacher = String(r[COL.teacher] ?? "").trim() || "—";
+        const ymd = getDateYMD(r[dateCol]);
+        const d = ymd ? jalaliYmdToDate(ymd) : null;
+        return { title, teacher, ymd, d };
+      }).filter(x => x.d instanceof Date && !Number.isNaN(x.d.getTime()));
+
+      items.sort((a,b) => b.d - a.d);
+      const top5 = items.slice(0, 5);
+
+      // اگر هیچ آیتمی نداریم -> کارت را پنهان
+      if (!top5.length){
+        hideCard("cardLatestPublished");
+        return;
+      } else {
+        showCard("cardLatestPublished");
+      }
+
+      listEl.innerHTML = top5.map((it, idx) => {
+        const chip = publishCol ? "بر اساس تاریخ انتشار/برگزاری" : "بر اساس تاریخ شروع ضبط";
+        const dateFa = it.ymd ? it.ymd.replace(/\//g, " / ") : "—";
+
+        return `
+          <div class="summary-row" style="justify-content:space-between;">
+            <div class="name" style="max-width:75%; display:flex; flex-direction:column; gap:4px;">
+              <div style="font-weight:900; color:rgba(242,247,255,.95);">
+                ${idx + 1}. ${escapeHtml(it.title)}
+              </div>
+              <div style="color:rgba(182,196,215,.90); font-size:12px;">
+                مدرس: ${escapeHtml(it.teacher)}
+              </div>
+            </div>
+
+            <div class="val" style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+              <div style="font-weight:950; color:rgba(242,247,255,.92);">
+                ${escapeHtml(dateFa)}
+              </div>
+              <span class="badge" style="font-size:10.5px; opacity:.95;">${chip}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      noteEl.textContent = "";
+    }
+
+    // ===============================
+    // renderAlertsOnly (UPDATED: hide if only OK)
+    // ===============================
+    function renderAlertsOnly(rows, timelineInfo){
+      const alerts = buildAlerts(rows, timelineInfo);
+
+      // اگر فقط یک پیام OK داریم، کل کارت مخفی شود
+      if (alerts.length === 1 && normKey(alerts[0].level) === "ok"){
+        hideCard("cardAlerts");
+        return;
+      }
+
+      showCard("cardAlerts");
+
+      $("#alertsBox").innerHTML = alerts.map(a => `
+        <div class="alert-item"
+             style="border-color:${rgba(a.color,.35)}; box-shadow: inset 0 0 0 999px ${rgba(a.color,.10)};">
+          <div class="t">${escapeHtml(a.text)}</div>
+          <div class="tag"
+               style="border-color:${rgba(a.color,.45)}; color:${rgba(a.color,.95)};">
+            ${escapeHtml(a.level)}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderCharts(dataset = FILTERED){
+      const rows = dataset || [];
+
+      const c1 = countMapNorm(rows, COL.courseStatus);
+      const entriesCourse = entriesFromMaster(MASTER.courseStatus, c1);
+      const dCourse = buildDoughnutData(entriesCourse, COURSE_STATUS_RULES);
+      CHART_COURSE = ensureDoughnutChart("pieCourseStatus", CHART_COURSE, dCourse);
+      renderSummary("#sumCourseStatus", entriesCourse, COURSE_STATUS_RULES);
+
+      const c2 = countMapNorm(rows, COL.contractStatus);
+      const entriesContract = entriesFromMaster(MASTER.contractStatus, c2);
+      const dContract = buildDoughnutData(entriesContract, CONTRACT_STATUS_RULES);
+      CHART_CONTRACT = ensureDoughnutChart("pieContractStatus", CHART_CONTRACT, dContract);
+      renderSummary("#sumContractStatus", entriesContract, CONTRACT_STATUS_RULES);
+
+      const tl = buildRecordingTimeline(rows);
+      $("#trendNote").textContent = tl.note || "—";
+      CHART_GANTT = ensureGanttSeasonChart("ganttRecordingTimeline", CHART_GANTT, tl);
+
+      renderPathStack(rows);
+      renderInOutMonthly(rows, tl);
+      renderHours(rows, tl);
+      renderLatestPublished(rows, tl);
+      renderAlertsOnly(rows, tl);
+    }
+
+    function renderTable(){
+      const headers = RAW.headers || [];
+      $("#theadRow").innerHTML = headers.map(h => `<th style="${colMinWidthCss(h)}">${escapeHtml(h)}</th>`).join("");
+
+      const total = FILTERED.length;
+      const maxPage = Math.max(1, Math.ceil(total / PAGE_SIZE));
+      if (PAGE > maxPage) PAGE = maxPage;
+
+      const start = (PAGE - 1) * PAGE_SIZE;
+      const end = Math.min(start + PAGE_SIZE, total);
+      const rows = FILTERED.slice(start, end);
+
+      $("#tableMeta").textContent = total
+        ? `نمایش ${start + 1} تا ${end} از ${total.toLocaleString("fa-IR")} ردیف (پس از فیلتر)`
+        : `هیچ ردیفی مطابق فیلترها یافت نشد`;
+
+      $("#tbody").innerHTML = rows.map(r => {
+        const pathVal = (r[COL.path] ?? "").trim();
+        const courseStatusVal = (r[COL.courseStatus] ?? "").trim();
+
+        const rowBase = pickColorByRules(pathVal, PATH_RULES, BRAND.deep);
+        const statusColor = pickColorByRules(courseStatusVal, COURSE_STATUS_RULES, rowBase);
+
+        return `<tr>${headers.map(h => {
+          let v = r[h] ?? "";
+
+          if (normKey(h) === normKey("مدت زمان کل")) {
+            const fv = formatGvizDuration(v);
+            if (fv) v = fv;
+          }
+
+          if (normKey(h).includes("تاریخ")) {
+            const dv = getDateYMD(v);
+            if (dv) v = dv;
+          }
+
+          let bgCss = cellBg(rowBase, "soft");
+          if (h === COL.path) bgCss = cellBg(rowBase, "strong");
+          if (h === COL.courseStatus) bgCss = cellBg(statusColor, "strong");
+          if (h === COL.title) bgCss = cellBg(rowBase, "mid");
+
+          const tdStyle = `style="background:${bgCss};${colMinWidthCss(h)}"`;
+
+          if (h === COL.resume && isProbablyUrl(v)){
+            return `<td ${tdStyle}><a class="link cell-link" href="${v}" target="_blank" rel="noopener">لینک</a></td>`;
+          }
+          return `<td ${tdStyle}>${escapeHtml(v)}</td>`;
+        }).join("")}</tr>`;
+      }).join("");
+
+      $("#pageInfo").textContent = `${PAGE} / ${maxPage}`;
+    }
+
+    async function loadData(){
+      setStatus("", "در حال اتصال…");
+
+      try {
+        const res = await fetch(GVIZ_URL);
+        const text = await res.text();
+        const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+
+        const headers = json.table.cols.map(c => c.label);
+        const rows = json.table.rows.map(r => {
+          const obj = {};
+          headers.forEach((h, i) => obj[h] = (r.c[i]?.v ?? r.c[i]?.f ?? ""));
+          return obj;
+        });
+
+        RAW = { headers, data: rows };
+        buildDynamicPathRules();
+        FILTERED = [...rows];
+        PAGE = 1;
+        DASH_UPDATED_AT = new Date();
+
+        MASTER.courseStatus = buildMasterKeys(rows.map(r => r[COL.courseStatus]));
+        MASTER.contractStatus = buildMasterKeys(rows.map(r => r[COL.contractStatus]));
+
+        const validPathSet = new Set(getAllUniquePaths().map(x => x.norm));
+        selectedPaths = selectedPaths.filter(p => validPathSet.has(p));
+
+        buildFilters();
+        buildPageSize();
+        computeKPIs(FILTERED);
+        renderCharts(FILTERED);
+        renderTable();
+
+        setStatus("ok", "متصل شد");
+      } catch (err) {
+        console.error(err);
+        setStatus("bad", "خطا در اتصال");
+        showToast("خطا در دریافت داده‌ها");
+      }
+    }
+
+    ["#fType", "#fStatus", "#fContract", "#fPayment"].forEach(sel =>
+      $(sel).addEventListener("change", applyFilters)
+    );
+    $("#q").addEventListener("input", applyFilters);
+
+    $("#prevPage").addEventListener("click", () => { if (PAGE > 1) { PAGE--; renderTable(); } });
+    $("#nextPage").addEventListener("click", () => {
+      const maxPage = Math.max(1, Math.ceil(FILTERED.length / PAGE_SIZE));
+      if (PAGE < maxPage) { PAGE++; renderTable(); }
+    });
+
+    $("#btnReload").addEventListener("click", () => loadData());
+
+    $("#btnReset").addEventListener("click", () => {
+      $("#q").value = "";
+      selectedPaths = [];
+      closePathDropdown();
+
+      $("#pathSearchInput").value = "";
+      $("#pathCheckboxList").querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+      $("#pathCheckboxList").querySelectorAll(".path-checkbox-item").forEach(item => item.classList.remove("hidden"));
+      updatePathButton();
+
+      ["#fType","#fStatus","#fContract","#fPayment"].forEach(id => $(id).selectedIndex = 0);
+      PAGE = 1;
+      applyFilters();
+    });
+
+    loadData();
+  </script>
+</body>
+</html>
