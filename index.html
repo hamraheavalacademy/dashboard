@@ -3,108 +3,2128 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>انتخاب داشبورد</title>
+  <title>داشبورد دوره‌های آکادمی همراه اول</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/iransans-font@v1.0/dist/font-face.css">
+  <!-- فایل‌ها را لوکال کنار همین HTML بگذار -->
+  <script src="chart.umd.min.js"></script>
+  <script src="xlsx.full.min.js"></script>
 
   <style>
     :root{
+      /* Brand palette (Hamrah Aval) */
+      --brand-blue: #0095da;
+      --brand-orange:#ff4f00;
+      --brand-deep: #295cab;
+      --brand-black:#000000;
+
+      /* Default: Dark theme tokens */
       --bg:#050a14;
       --card:#0b1733;
+      --card2:#08132a;
+
       --text:#f2f7ff;
       --muted:#b6c4d7;
+
       --line:rgba(0,149,218,.18);
+
+      --bad:#ff6b6b;
+      --good:#36d399;
+      --warn:var(--brand-orange);
+
       --shadow: 0 14px 40px rgba(0,0,0,.45);
       --radius:18px;
-      --font: "IRANSans","IRANSansWeb",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-      --blue:#0095da;
-      --orange:#ff4f00;
+
+      --font: "IRANSans", "IRANSansWeb", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+
+      /* Background gradients (Dark) */
+      --bg-g1: radial-gradient(1200px 800px at 12% 10%, rgba(0,149,218,.22), transparent 58%);
+      --bg-g2: radial-gradient(900px 700px at 88% 25%, rgba(41,92,171,.20), transparent 60%);
+      --bg-g3: radial-gradient(1000px 700px at 55% 95%, rgba(255,79,0,.12), transparent 62%);
     }
+
+    /* Light theme overrides */
+    :root[data-theme="light"]{
+      --bg:#f6f8fc;
+      --card:#ffffff;
+      --card2:#ffffff;
+
+      --text:#0b1220;
+      --muted:#42526b;
+
+      --line:rgba(0,149,218,.22);
+
+      --shadow: 0 14px 40px rgba(10,20,40,.12);
+
+      /* Background gradients (Light) — keep brand identity but softer */
+      --bg-g1: radial-gradient(1200px 800px at 12% 10%, rgba(0,149,218,.18), transparent 60%);
+      --bg-g2: radial-gradient(900px 700px at 88% 25%, rgba(41,92,171,.14), transparent 62%);
+      --bg-g3: radial-gradient(1000px 700px at 55% 95%, rgba(255,79,0,.10), transparent 64%);
+    }
+
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family:var(--font);
       color:var(--text);
       background:
-        radial-gradient(1200px 800px at 12% 10%, rgba(0,149,218,.22), transparent 58%),
-        radial-gradient(1000px 700px at 55% 95%, rgba(255,79,0,.12), transparent 62%),
+        var(--bg-g1),
+        var(--bg-g2),
+        var(--bg-g3),
         var(--bg);
+      transition: background-color .25s ease, color .25s ease;
     }
-    .wrap{
-      width:min(980px, 94vw);
-      margin:28px auto;
+
+    .container{
+      width:min(1400px, 94vw);
+      margin:24px auto 48px;
       display:flex;
       flex-direction:column;
+      gap:16px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:16px 18px;
+      background: linear-gradient(135deg,
+        rgba(41,92,171,.96) 0%,
+        rgba(0,149,218,.42) 55%,
+        rgba(8,19,42,.92) 100%
+      );
+      border:1px solid rgba(0,149,218,.22);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+      transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+
+    :root[data-theme="light"] header{
+      background: linear-gradient(135deg,
+        rgba(41,92,171,.18) 0%,
+        rgba(0,149,218,.16) 50%,
+        rgba(255,255,255,.92) 100%
+      );
+      border-color: rgba(0,149,218,.22);
+    }
+
+    header::after{
+      content:"";
+      position:absolute;
+      inset:-60px -80px auto auto;
+      width:240px;
+      height:240px;
+      background:radial-gradient(circle at 30% 30%, rgba(255,79,0,.10), transparent 65%);
+      filter:blur(6px);
+      opacity:.55;
+      pointer-events:none;
+    }
+    :root[data-theme="light"] header::after{
+      opacity:.35;
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      position:relative;
+      z-index:1;
+    }
+    .title h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+      font-weight:900;
+    }
+
+    .right-actions{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:10px;
+      min-width:280px;
+      position:relative;
+      z-index:1;
+      align-items:center;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .logo{
+      width:44px;
+      height:44px;
+      object-fit:contain;
+      border-radius:12px;
+      background: rgba(8,19,42,.35);
+      border:1px solid rgba(255,255,255,.12);
+      padding:6px;
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] .logo{
+      background: rgba(255,255,255,.75);
+      border-color: rgba(0,149,218,.18);
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,149,218,.20);
+      background:rgba(8,19,42,.55);
+      color:rgba(242,247,255,.78);
+      font-size:12px;
+      white-space:nowrap;
+      backdrop-filter: blur(8px);
+      transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] .pill{
+      background: rgba(255,255,255,.70);
+      color: rgba(11,18,32,.75);
+      border-color: rgba(0,149,218,.22);
+    }
+
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--warn)}
+    .dot.ok{background:var(--good)}
+    .dot.bad{background:var(--bad)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12, 1fr);
       gap:14px;
     }
+
     .card{
       background: linear-gradient(180deg, rgba(11,23,51,.92), rgba(5,10,20,.72));
       border:1px solid rgba(0,149,218,.16);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
-      padding:18px;
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+      transition: transform .12s ease, filter .18s ease, background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
     }
-    h1{ margin:0 0 6px; font-size:18px; font-weight:900; }
-    p{ margin:0; color:var(--muted); font-size:13px; line-height:1.8; }
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap:12px;
-      margin-top:12px;
+    .card:hover{
+      transform: translateY(-2px);
+      filter: brightness(1.03);
     }
-    a.btn{
+    :root[data-theme="light"] .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.86));
+      border-color: rgba(0,149,218,.16);
+      box-shadow: var(--shadow);
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(900px 220px at 20% 0%, rgba(0,149,218,.08), transparent 55%);
+      pointer-events:none;
+      transition: opacity .25s ease;
+    }
+    :root[data-theme="light"] .card::before{
+      opacity:.75;
+    }
+
+    .card.filters{
+      overflow: visible;
+      z-index: 50;
+      grid-column: span 12;
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px 12px;
+      align-items:flex-end;
+      position:relative;
+    }
+
+    .kpi{
+      grid-column: span 3;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-height:92px;
+      position:relative;
+      z-index:1;
+    }
+    .kpi .label{
+      color:rgba(182,196,215,.92);
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      transition: color .25s ease;
+    }
+    :root[data-theme="light"] .kpi .label{
+      color: rgba(66,82,107,.90);
+    }
+
+    .kpi .value{
+      font-size:28px;
+      font-weight:950;
+      letter-spacing:.3px;
+      color:var(--text);
+      text-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition: color .25s ease, text-shadow .25s ease;
+    }
+    :root[data-theme="light"] .kpi .value{
+      text-shadow: 0 10px 30px rgba(10,20,40,.10);
+    }
+
+    .kpi .hint{
+      color:rgba(182,196,215,.88);
+      font-size:12px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      transition: color .25s ease;
+    }
+    :root[data-theme="light"] .kpi .hint{
+      color: rgba(66,82,107,.80);
+    }
+
+    .badge{
+      padding:3px 9px;
+      border-radius:999px;
+      border:1px solid rgba(0,149,218,.22);
+      background:rgba(0,149,218,.14);
+      color:rgba(242,247,255,.92);
+      font-size:11px;
+      transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] .badge{
+      background: rgba(0,149,218,.10);
+      color: rgba(11,18,32,.88);
+    }
+
+    .kpi.kpi-global{
+      background: linear-gradient(180deg, rgba(255,79,0,.18), rgba(11,23,51,.88));
+      border: 1px solid rgba(255,79,0,.35);
+    }
+    .kpi.kpi-global::before{
+      background: radial-gradient(900px 220px at 20% 0%, rgba(255,79,0,.14), transparent 55%);
+    }
+    .kpi.kpi-global .label{ color: rgba(255,255,255,.88); }
+    .kpi.kpi-global .hint{ color: rgba(255,255,255,.72); }
+    .kpi.kpi-global .value{ color:#fff; }
+
+    :root[data-theme="light"] .kpi.kpi-global{
+      background: linear-gradient(180deg, rgba(255,79,0,.12), rgba(255,255,255,.92));
+      border-color: rgba(255,79,0,.28);
+    }
+    :root[data-theme="light"] .kpi.kpi-global .label{ color: rgba(11,18,32,.82); }
+    :root[data-theme="light"] .kpi.kpi-global .hint{ color: rgba(11,18,32,.62); }
+    :root[data-theme="light"] .kpi.kpi-global .value{ color: rgba(11,18,32,.95); }
+
+    .field{
       display:flex;
       flex-direction:column;
       gap:6px;
-      padding:16px 14px;
-      border-radius:16px;
-      text-decoration:none;
-      color:var(--text);
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(8,19,42,.55);
-      transition: transform .08s ease, border-color .18s ease, filter .18s ease;
+      min-width:180px;
+      flex: 0 1 180px;
+      position:relative;
     }
-    a.btn:hover{
-      border-color: rgba(0,149,218,.35);
-      filter: brightness(1.05);
+    .field.wide{
+      min-width:400px;
+      flex: 1 1 420px;
     }
-    a.btn:active{ transform: translateY(1px); }
-    .tag{
-      display:inline-flex;
-      align-items:center;
-      width:max-content;
-      padding:3px 10px;
-      border-radius:999px;
+
+    .field.path-field{ z-index: 200; }
+    .field.path-field{
+      flex: 0 0 420px;
+      width: 420px;
+      max-width: 420px;
+    }
+
+    .flabel{
       font-size:11px;
-      border:1px solid rgba(0,149,218,.28);
-      background: rgba(0,149,218,.12);
+      color:rgba(182,196,215,.92);
+      padding-right:2px;
+      user-select:none;
+      line-height:1.2;
+      transition: color .25s ease;
     }
-    .tag.orange{
-      border-color: rgba(255,79,0,.35);
-      background: rgba(255,79,0,.10);
+    :root[data-theme="light"] .flabel{ color: rgba(66,82,107,.88); }
+
+    .input, select{
+      background:rgba(8,19,42,.70);
+      border:1px solid rgba(0,149,218,.18);
+      color:var(--text);
+      padding:10px 10px;
+      border-radius:14px;
+      font-size:13px;
+      outline:none;
+      min-width:180px;
+      transition: border-color .18s ease, box-shadow .18s ease, opacity .18s ease, background-color .25s ease, color .25s ease;
+      font-family: var(--font);
     }
-    .ttl{ font-weight:950; font-size:14px; }
-    .sub{ color:var(--muted); font-size:12px; }
-    @media (max-width:720px){
-      .grid{ grid-template-columns: 1fr; }
+    :root[data-theme="light"] .input,
+    :root[data-theme="light"] select{
+      background: rgba(255,255,255,.85);
+      color: rgba(11,18,32,.92);
+      border-color: rgba(0,149,218,.18);
     }
+
+    .input::placeholder{color:rgba(182,196,215,.70)}
+    :root[data-theme="light"] .input::placeholder{ color: rgba(66,82,107,.55); }
+
+    .input:focus, select:focus{
+      border-color: rgba(0,149,218,.55);
+      box-shadow:
+        0 0 0 4px rgba(0,149,218,.14),
+        0 0 0 7px rgba(255,79,0,.08);
+    }
+    select{cursor:pointer}
+
+    .input:disabled, select:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    #pathDropdownButton{
+      background:rgba(8,19,42,.70);
+      border:1px solid rgba(0,149,218,.18);
+      color:var(--text);
+      padding:12px 14px 12px 22px;
+      border-radius:14px;
+      font-size:13px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+      transition:all .18s ease, background-color .25s ease, color .25s ease;
+      font-family: var(--font);
+      width:100%;
+      min-width: 420px;
+    }
+    :root[data-theme="light"] #pathDropdownButton{
+      background: rgba(255,255,255,.85);
+      color: rgba(11,18,32,.92);
+    }
+    #pathDropdownButton:hover{ border-color:rgba(0,149,218,.55); }
+    #pathDropdownButton svg{ width:18px; height:18px; opacity:.9; }
+    #pathDropdownButton[aria-disabled="true"]{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    #pathDropdown{
+      position:absolute;
+      top:calc(100% + 8px);
+      right:0;
+      left:auto;
+      width: 420px;
+      max-width: min(92vw, 520px);
+      background:rgba(11,23,51,.98);
+      border:1px solid rgba(0,149,218,.22);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      z-index:9999;
+      overflow:hidden;
+      display:none;
+      transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+    :root[data-theme="light"] #pathDropdown{
+      background: rgba(255,255,255,.96);
+      border-color: rgba(0,149,218,.18);
+    }
+    #pathDropdown.open{ display:block; }
+
+    .path-search-wrap{
+      padding:12px 12px;
+      border-bottom:1px solid rgba(0,149,218,.16);
+      position:relative;
+      transition: border-color .25s ease;
+    }
+
+    #pathSearchInput{
+      width:100%;
+      background:rgba(8,19,42,.8);
+      border:1px solid rgba(0,149,218,.3);
+      color:var(--text);
+      padding:10px 38px 10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      font-family: var(--font);
+      transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] #pathSearchInput{
+      background: rgba(255,255,255,.92);
+      color: rgba(11,18,32,.92);
+      border-color: rgba(0,149,218,.22);
+    }
+
+    .path-list-wrap{
+      max-height:280px;
+      overflow:auto;
+      padding:8px;
+      background: rgba(8,19,42,.25);
+      border-radius: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,149,218,.85) rgba(8,19,42,.65);
+      transition: background-color .25s ease;
+    }
+    :root[data-theme="light"] .path-list-wrap{
+      background: rgba(0,149,218,.04);
+      scrollbar-color: rgba(0,149,218,.75) rgba(255,255,255,.85);
+    }
+
+    .path-checkbox-item{
+      display:flex;
+      align-items:center;
+      padding:10px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:all .18s ease, background-color .25s ease;
+      gap:10px;
+    }
+    .path-checkbox-item:hover{ background:rgba(0,149,218,.15); }
+    :root[data-theme="light"] .path-checkbox-item:hover{ background: rgba(0,149,218,.10); }
+
+    .path-checkbox-item input[type="checkbox"]{
+      width:18px;height:18px;accent-color:#0095da;cursor:pointer;margin:0;
+    }
+    .path-checkbox-item label{ cursor:pointer; font-size:13px; flex:1; user-select:none; }
+    .path-checkbox-item.hidden{ display:none; }
+
+    #pathFooter{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:12px 14px;
+      border-top:1px solid rgba(0,149,218,.16);
+      font-size:12px;
+      color:rgba(182,196,215,.9);
+      gap:12px;
+      transition: color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] #pathFooter{ color: rgba(66,82,107,.85); }
+
+    #pathClearAll{
+      color:rgba(255,107,107,.9);
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    .btn{
+      cursor:pointer;
+      user-select:none;
+      border:1px solid rgba(0,149,218,.25);
+      background:linear-gradient(90deg, rgba(0,149,218,.92), rgba(41,92,171,.88));
+      color:#ffffff;
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      font-weight:800;
+      transition: transform .06s ease, filter .18s ease, box-shadow .18s ease, background-color .25s ease, color .25s ease, border-color .25s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,.22);
+      font-family: var(--font);
+    }
+    .btn:hover{filter:brightness(1.05)}
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{
+      background:rgba(8,19,42,.55);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(242,247,255,.92);
+      box-shadow:none;
+    }
+    :root[data-theme="light"] .btn.secondary{
+      background: rgba(255,255,255,.70);
+      border-color: rgba(0,149,218,.18);
+      color: rgba(11,18,32,.85);
+    }
+
+    .chart{
+      grid-column: span 6;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:300px;
+      position:relative;
+      z-index:1;
+    }
+    .chart h3{
+      margin:0;
+      font-size:14px;
+      color:rgba(242,247,255,.96);
+      letter-spacing:.2px;
+      font-weight:900;
+      transition: color .25s ease;
+    }
+    :root[data-theme="light"] .chart h3{ color: rgba(11,18,32,.92); }
+
+    .chart-grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:12px;
+      align-items:center;
+      min-height:260px;
+    }
+    .chart-canvas{
+      height:240px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px;
+      border-radius:14px;
+      border:1px solid rgba(0,149,218,.16);
+      background: rgba(8,19,42,.22);
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] .chart-canvas{
+      background: rgba(0,149,218,.04);
+      border-color: rgba(0,149,218,.16);
+    }
+    .chart-canvas canvas{ width:100% !important; height:100% !important; }
+
+    .chart-summary{ display:flex; flex-direction:column; gap:10px; }
+    .summary-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(8,19,42,.35);
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] .summary-row{
+      background: rgba(255,255,255,.88);
+      border-color: rgba(0,149,218,.14);
+    }
+
+    .summary-row .name{
+      color:rgba(182,196,215,.92);
+      font-size:12px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width: 70%;
+      transition: color .25s ease;
+    }
+    :root[data-theme="light"] .summary-row .name{ color: rgba(66,82,107,.90); }
+
+    .summary-row .val{
+      direction:ltr;
+      text-align:left;
+      color:rgba(242,247,255,.95);
+      font-size:12px;
+      font-weight:900;
+      white-space:nowrap;
+      transition: color .25s ease;
+    }
+    :root[data-theme="light"] .summary-row .val{ color: rgba(11,18,32,.92); }
+
+    .summary-row .pct{
+      direction:ltr;
+      text-align:left;
+      color:rgba(182,196,215,.92);
+      font-size:12px;
+      white-space:nowrap;
+      transition: color .25s ease;
+    }
+    :root[data-theme="light"] .summary-row .pct{ color: rgba(66,82,107,.78); }
+
+    .table-wrap{ grid-column: span 12; padding:0; overflow:hidden; }
+    .table-top{
+      padding:12px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid rgba(0,149,218,.16);
+      background: linear-gradient(90deg, rgba(41,92,171,.20), rgba(8,19,42,.38));
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] .table-top{
+      background: linear-gradient(90deg, rgba(41,92,171,.08), rgba(0,149,218,.06));
+    }
+
+    .table-top .meta{ color:rgba(182,196,215,.92); font-size:12px; transition: color .25s ease; }
+    :root[data-theme="light"] .table-top .meta{ color: rgba(66,82,107,.88); }
+
+    .pager{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+    table{
+      width: max-content;
+      min-width: 100%;
+      border-collapse:collapse;
+      border-spacing:0;
+      font-size:12.5px;
+      font-family: var(--font);
+    }
+
+    thead th{
+      position:sticky;
+      top:0;
+      z-index:2;
+      background: linear-gradient(90deg, rgba(41,92,171,.35), rgba(0,149,218,.18));
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(0,149,218,.18);
+      padding:10px 10px;
+      text-align:right;
+      color:rgba(242,247,255,.82);
+      font-weight:900;
+      white-space:nowrap;
+      border:1px solid rgba(255,255,255,.10);
+      transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] thead th{
+      background: linear-gradient(90deg, rgba(41,92,171,.10), rgba(0,149,218,.08));
+      color: rgba(11,18,32,.78);
+      border-color: rgba(0,149,218,.12);
+    }
+
+    tbody td{
+      border:1px solid rgba(255,255,255,.09);
+      padding:10px 10px;
+      vertical-align:top;
+      color:rgba(242,247,255,.95);
+      transition: box-shadow .16s ease, filter .16s ease, color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] tbody td{
+      border-color: rgba(0,149,218,.10);
+      color: rgba(11,18,32,.92);
+    }
+    tbody tr:hover td{ box-shadow: inset 0 0 0 9999px rgba(0,149,218,.08); }
+
+    .muted{color:var(--muted)}
+    .link{
+      color:var(--brand-blue);
+      text-decoration:none;
+      border-bottom:1px dashed rgba(0,149,218,.55);
+    }
+    .cell-link{ color: inherit !important; border-bottom-color: currentColor !important; opacity:.92; }
+
+    .toast{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,149,218,.18);
+      background:rgba(8,19,42,.55);
+      color:rgba(182,196,215,.95);
+      font-size:12.5px;
+      display:none;
+      backdrop-filter: blur(8px);
+      grid-column: span 12;
+      transition: background-color .25s ease, color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] .toast{
+      background: rgba(255,255,255,.80);
+      color: rgba(11,18,32,.85);
+      border-color: rgba(0,149,218,.18);
+    }
+    .toast.show{display:block}
+
+    .table-scroll{
+      overflow-x: auto;
+      overflow-y: hidden;
+      border: 1px solid rgba(0,149,218,.22);
+      border-radius: 14px;
+      background: rgba(8,19,42,.25);
+      transition: background-color .25s ease, border-color .25s ease;
+    }
+    :root[data-theme="light"] .table-scroll{
+      background: rgba(255,255,255,.72);
+      border-color: rgba(0,149,218,.16);
+    }
+
+    /* فقط بعد از انتخاب مدرسه نمایش داده شود */
+    .school-only{ display:none; }
+    .school-only.show{ display:flex; }
+    .school-only.show.table-wrap{ display:block; }
+    .school-only.show.chart{ display:flex; }
+    .school-only.show.kpi{ display:flex; }
+
+    /* Theme Toggle (real switch) */
+    .theme-switch{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,149,218,.20);
+      background: rgba(8,19,42,.40);
+      backdrop-filter: blur(8px);
+      transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+      user-select:none;
+    }
+    :root[data-theme="light"] .theme-switch{
+      background: rgba(255,255,255,.70);
+      border-color: rgba(0,149,218,.22);
+    }
+
+    .theme-switch .tlabel{
+      font-size:12px;
+      color: rgba(242,247,255,.80);
+      transition: color .25s ease;
+      white-space:nowrap;
+    }
+    :root[data-theme="light"] .theme-switch .tlabel{
+      color: rgba(11,18,32,.78);
+    }
+
+    .switch{
+      position:relative;
+      width:46px;
+      height:26px;
+      flex:0 0 auto;
+    }
+    .switch input{
+      opacity:0;
+      width:0;height:0;
+      position:absolute;
+    }
+    .slider{
+      position:absolute;
+      inset:0;
+      border-radius:999px;
+      background: rgba(182,196,215,.20);
+      border:1px solid rgba(0,149,218,.18);
+      transition: .18s ease;
+      box-shadow: inset 0 0 0 9999px rgba(0,0,0,.12);
+    }
+    :root[data-theme="light"] .slider{
+      background: rgba(41,92,171,.08);
+      box-shadow: inset 0 0 0 9999px rgba(255,255,255,.12);
+    }
+    .slider:before{
+      content:"";
+      position:absolute;
+      height:20px;
+      width:20px;
+      right:3px;
+      top:50%;
+      transform: translateY(-50%);
+      border-radius:999px;
+      background: linear-gradient(135deg, rgba(0,149,218,.95), rgba(41,92,171,.90));
+      box-shadow: 0 8px 18px rgba(0,0,0,.30);
+      transition: .18s ease;
+    }
+    :root[data-theme="light"] .slider:before{
+      box-shadow: 0 8px 18px rgba(10,20,40,.18);
+    }
+
+    .switch input:checked + .slider{
+      background: rgba(255,79,0,.14);
+      border-color: rgba(255,79,0,.30);
+    }
+    .switch input:checked + .slider:before{
+      transform: translateY(-50%) translateX(-20px);
+      background: linear-gradient(135deg, rgba(255,79,0,.95), rgba(0,149,218,.88));
+    }
+
+    @media (max-width: 980px){
+      .kpi{grid-column: span 6;}
+      .chart{grid-column: span 12;}
+      header{flex-direction:column; align-items:stretch;}
+      .right-actions{justify-content:flex-start;}
+      .field{min-width: 160px;}
+      .field.wide{min-width: 260px;}
+      .chart-grid{ grid-template-columns: 1fr; }
+      .chart-canvas{ height: 240px; }
+      .field.path-field{ min-width: 260px; flex: 1 1 260px; width:auto; max-width:none; }
+      #pathDropdownButton{ min-width: 260px; }
+      #pathDropdown{ width: 420px; }
+    }
+
+    #pathDropdownButton{ width: 100%; min-width: 0; }
+    #pathDropdown{ width: 420px; }
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <h1>انتخاب داشبورد</h1>
 
-      <div class="grid">
-        <a class="btn" href="dashboardver2.html#/ai">
-            <span class="ttl">داشبورد هوش مصنوعی</span>
-          </a>
-          
-          <a class="btn" href="dashboardver2.html#/data">
-            <span class="ttl">داشبورد علوم داده</span>
-          </a>
+<body>
+  <div class="container">
+    <header>
+      <div class="title">
+        <div class="brand">
+          <img class="logo" src="logo.png" alt="لوگوی آکادمی همراه اول" />
+          <h1 id="dashboardTitle">داشبورد دوره‌های آکادمی همراه اول</h1>
+        </div>
       </div>
-    </div>
+
+      <div class="right-actions">
+        <div class="pill" title="وضعیت بارگذاری">
+          <span id="statusDot" class="dot"></span>
+          <span id="statusText">در حال لود فایل داشبورد…</span>
+        </div>
+
+        <!-- Real switch toggle -->
+        <div class="theme-switch" title="تغییر تم">
+          <span class="tlabel" id="themeLabel">دارک</span>
+          <label class="switch">
+            <input type="checkbox" id="themeToggle" aria-label="تغییر تم دارک/لایت">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <button class="btn secondary" id="btnReload">رفرش داده‌ها</button>
+        <button class="btn secondary" id="btnReset">ریست فیلترها</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card filters" id="filtersCard">
+        <!-- سلکت مدرسه اینجا اضافه میشه -->
+        <div class="field wide">
+          <label class="flabel" for="q">جستجو</label>
+          <input class="input" id="q" placeholder="ابتدا مدرسه را انتخاب کنید…" disabled />
+        </div>
+
+        <div class="field path-field">
+          <label class="flabel">مسیر تخصصی</label>
+          <button id="pathDropdownButton" type="button" aria-expanded="false" aria-disabled="true">
+            <span id="pathSelectedText">ابتدا مدرسه را انتخاب کنید</span>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+            </svg>
+          </button>
+
+          <div id="pathDropdown" role="dialog" aria-label="انتخاب مسیر تخصصی">
+            <div class="path-search-wrap">
+              <input type="text" id="pathSearchInput" placeholder="جستجوی مسیر..." />
+            </div>
+
+            <div class="path-list-wrap">
+              <ul id="pathCheckboxList" style="list-style:none;margin:0;padding:0"></ul>
+            </div>
+
+            <div id="pathFooter">
+              <span><span id="pathSelectedCount">0</span> مسیر انتخاب شده</span>
+              <span id="pathClearAll">پاک کردن همه</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI های کلی (همیشه نمایش داده می‌شوند) -->
+      <div class="card kpi kpi-global">
+        <div class="label">تعداد کل مدارس</div>
+        <div class="value" id="kpiTotalSchools">—</div>
+      </div>
+
+      <div class="card kpi kpi-global">
+        <div class="label">تعداد کل مسیرها</div>
+        <div class="value" id="kpiTotalAllPaths">—</div>
+      </div>
+
+      <div class="card kpi kpi-global">
+        <div class="label">تعداد کل دوره‌ها</div>
+        <div class="value" id="kpiTotalCourses">—</div>
+      </div>
+
+      <div class="card kpi kpi-global">
+        <div class="label">تعداد کل اساتید</div>
+        <div class="value" id="kpiTotalTeachers">—</div>
+      </div>
+
+      <div class="card kpi kpi-global">
+        <div class="label">تعداد کل ساعت دوره‌ها</div>
+        <div class="value" id="kpiTotalHours">—</div>
+      </div>
+
+      <!-- KPI های مدرسه انتخاب‌شده (فقط بعد از انتخاب مدرسه) -->
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">دوره‌های برگزار‌ شده / منتشر شده</div>
+        <div class="value" id="kpiRunOrPublished">—</div>
+        <div class="hint">
+          <span class="badge" id="kpiUpdated">—</span>
+          <span class="muted">آخرین آپدیت داشبورد</span>
+        </div>
+      </div>
+
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">دوره‌های در حال ضبط</div>
+        <div class="value" id="kpiRecording">—</div>
+      </div>
+
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">دوره‌های در حال تدوین</div>
+        <div class="value" id="kpiEditing">—</div>
+      </div>
+
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">پیشنهادی / در حال بررسی</div>
+        <div class="value" id="kpiProposedOrReview">—</div>
+      </div>
+
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">تایید شده</div>
+        <div class="value" id="kpiApproved">—</div>
+      </div>
+
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">تعداد اساتید</div>
+        <div class="value" id="kpiTeachers">—</div>
+      </div>
+
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">تعداد کل مسیرها</div>
+        <div class="value" id="kpiPaths">—</div>
+      </div>
+
+      <!-- چارت‌ها (فقط بعد از انتخاب مدرسه) -->
+      <div class="card chart school-only" data-school-only="1">
+        <h3>وضعیت دوره‌ها (سهم/درصد)</h3>
+        <div class="chart-grid">
+          <div class="chart-canvas">
+            <canvas id="pieCourseStatus"></canvas>
+          </div>
+          <div class="chart-summary" id="sumCourseStatus"></div>
+        </div>
+      </div>
+
+      <div class="card chart school-only" data-school-only="1">
+        <h3>وضعیت قراردادها (سهم/درصد)</h3>
+        <div class="chart-grid">
+          <div class="chart-canvas">
+            <canvas id="pieContractStatus"></canvas>
+          </div>
+          <div class="chart-summary" id="sumContractStatus"></div>
+        </div>
+      </div>
+
+      <div class="card table-wrap school-only" data-school-only="1">
+        <div class="table-top">
+          <div class="meta" id="tableMeta">—</div>
+          <div class="pager">
+            <select id="pageSize"></select>
+            <button class="btn secondary" id="prevPage">قبلی</button>
+            <button class="btn secondary" id="nextPage">بعدی</button>
+            <span id="pageInfo">—</span>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table id="tbl">
+            <thead><tr id="theadRow"></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </section>
   </div>
+
+  <script>
+    // ===============================
+    // تنظیمات آفلاین (بدون آپلود)
+    // ===============================
+    const DEFAULT_XLSX_PATHS = ["Dashboard.xlsx", "Dashboard.xlxs"];
+
+    let WORKBOOK = null;
+
+    let SCHOOLS = [];
+    let selectedSchool = null;
+
+    const $ = (sel) => document.querySelector(sel);
+
+    const statusDot = $("#statusDot");
+    const statusText = $("#statusText");
+    const toast = $("#toast");
+
+    let RAW = { headers: [], data: [] };
+    let FILTERED = [];
+    let PAGE = 1;
+    let PAGE_SIZE = 10;
+    let DASH_UPDATED_AT = null;
+
+    let selectedPaths = [];
+    let PATH_OPTIONS = [];
+    const MASTER = { courseStatus: [], contractStatus: [] };
+
+    let ALL_PATHS_SET = new Set();
+    let ALL_COURSES_SET = new Set();
+
+    const COL = {
+      path: "مسیر تخصصی",
+      type: "نوع دوره",
+      courseStatus: "وضعیت دوره",
+      contractStatus: "وضعیت قرارداد",
+      paymentStatus: "وضعیت پرداخت",
+      title: "عنوان دوره",
+      teacher: "نام مدرس",
+      resume: "لینک رزومه و مشخصات مدرس",
+      courseId: "آیدی دوره",
+      teacherId: "آیدی مدرس"
+    };
+
+    const COL_MIN_WIDTH = {
+      [COL.title]: 340,
+      [COL.path]: 220,
+      [COL.type]: 170,
+      [COL.teacher]: 200
+    };
+
+    const BRAND = { blue:"#0095da", orange:"#ff4f00", deep:"#295cab", black:"#000000" };
+
+    let PATH_RULES = [];
+    const PATH_COLOR_PALETTE = [
+      "#34D399", "#60A5FA", "#FBBF24", "#F472B6", "#A78BFA",
+      "#22C55E", "#38BDF8", "#FB7185", "#F59E0B", "#A3E635",
+      "#818CF8", "#2DD4BF"
+    ];
+
+    const COURSE_STATUS_RULES = [
+      { re: /منتشر/i,              color: "#22C55E" },
+      { re: /در\s*حال\s*ضبط/i,     color: "#A855F7" },
+      { re: /در\s*حال\s*تدوین/i,   color: "#3B82F6" },
+      { re: /پیشنهاد/i,            color: "#F59E0B" },
+      { re: /برگزار/i,             color: "#10B981" },
+      { re: /لغو|کنسل|متوقف/i,     color: "#EF4444" },
+    ];
+
+    const CONTRACT_STATUS_RULES = [
+      { re: /امضا/i,                 color: "#22C55E" },
+      { re: /بدون\s*قرارداد/i,        color: "#EF4444" },
+      { re: /پیش\s*نویس|ارسال/i,      color: "#F59E0B" },
+      { re: /در\s*حال\s*بررسی/i,      color: "#60A5FA" },
+    ];
+
+    let CHART_COURSE = null;
+    let CHART_CONTRACT = null;
+
+    // ===============================
+    // Theme (Dark/Light) with localStorage + real switch
+    // ===============================
+    const THEME_KEY = "dashboard_theme"; // "dark" | "light"
+
+    function applyTheme(theme){
+      const t = (theme === "light") ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", t);
+
+      const toggle = $("#themeToggle");
+      const label  = $("#themeLabel");
+
+      if (toggle) toggle.checked = (t === "light");
+      if (label)  label.textContent = (t === "light") ? "لایت" : "دارک";
+
+      // Chart.js default text color depending on theme
+      if (window.Chart){
+        Chart.defaults.color = (t === "light")
+          ? "rgba(11,18,32,.78)"
+          : "rgba(242,247,255,.80)";
+      }
+
+      try { localStorage.setItem(THEME_KEY, t); } catch(e) {}
+    }
+
+    function initTheme(){
+      let saved = null;
+      try { saved = localStorage.getItem(THEME_KEY); } catch(e) {}
+      applyTheme(saved || "dark"); // default: dark
+    }
+
+    // ===============================
+    // UI helpers
+    // ===============================
+    function setStatus(type, text){
+      statusDot.className = "dot" + (type ? " " + type : "");
+      statusText.textContent = text;
+    }
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove("show"), 6500);
+    }
+
+    function setSchoolMode(isOn){
+      document.querySelectorAll("[data-school-only]").forEach(el => {
+        el.classList.toggle("show", !!isOn);
+      });
+
+      $("#q").disabled = !isOn;
+      $("#q").placeholder = isOn ? "جستجو (عنوان دوره، نام مدرس، …)" : "ابتدا مدرسه را انتخاب کنید…";
+
+      const pathBtn = $("#pathDropdownButton");
+      pathBtn.setAttribute("aria-disabled", isOn ? "false" : "true");
+      if (!isOn){
+        $("#pathSelectedText").textContent = "ابتدا مدرسه را انتخاب کنید";
+        closePathDropdown();
+      }
+    }
+
+    // ===============================
+    // Text helpers
+    // ===============================
+    function escapeHtml(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    }
+
+    function isProbablyUrl(s){
+      return /^https?:\/\/\S+/i.test((s ?? "").trim());
+    }
+
+    function normKey(s){
+      return String(s ?? "")
+        .replace(/\u200c/g, " ")
+        .replace(/ي/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+    }
+
+    function cleanFaText(s){
+      return String(s ?? "")
+        .replace(/\u200c/g, " ")
+        .replace(/ي/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function resolveColKey(headers, wantedLabel){
+      const wanted = normKey(wantedLabel);
+      const map = new Map();
+      (headers || []).forEach(h => map.set(normKey(h), h));
+      return map.get(wanted) || wantedLabel;
+    }
+
+    function parseDurationToSeconds(v){
+      if (v === null || v === undefined || v === "") return 0;
+
+      if (typeof v === "number" && isFinite(v)){
+        return Math.round(v * 24 * 3600);
+      }
+
+      if (v instanceof Date){
+        return (v.getHours() * 3600) + (v.getMinutes() * 60) + v.getSeconds();
+      }
+
+      const s = String(v).trim();
+      if (!s) return 0;
+
+      if (s.includes(":")){
+        const parts = s.split(":");
+        const h = parseInt(parts[0], 10) || 0;
+        const m = parseInt(parts[1], 10) || 0;
+        let sec = 0;
+        if (parts.length > 2){
+          sec = parseInt(String(parts[2]).split(".")[0], 10) || 0;
+        }
+        return (h * 3600) + (m * 60) + sec;
+      }
+
+      const num = Number(s);
+      if (isFinite(num) && num > 0) return Math.round(num * 3600);
+
+      return 0;
+    }
+
+    // HH:MM:SS (kept in case you need it elsewhere)
+    function formatSecondsToHMS_Fa(totalSeconds){
+      const sec = Math.max(0, Math.round(totalSeconds || 0));
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+      const mm = String(m).padStart(2, "0");
+      const ss = String(s).padStart(2, "0");
+      return `${h.toLocaleString("fa-IR")}:${mm}:${ss}`;
+    }
+
+    // HH:MM (requested)
+    function formatSecondsToHM_Fa(totalSeconds){
+      const sec = Math.max(0, Math.round(totalSeconds || 0));
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const mm = String(m).padStart(2, "0");
+      return `${h.toLocaleString("fa-IR")}:${mm}`;
+    }
+
+    function splitPaths(cell){
+      const s = String(cell ?? "")
+        .replace(/\u200c/g, " ")
+        .replace(/ي/g, "ی")
+        .replace(/ك/g, "ک")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (!s) return [];
+      return s
+        .split(/(?:\s*(?:,|،|؛|;|\||\n|\r)\s*)/g)
+        .map(x => x.trim())
+        .filter(Boolean);
+    }
+
+    function splitValidPaths(cell){
+      const raw = cleanFaText(cell || "");
+      if (!raw) return [];
+      if (normKey(raw).includes("خارج از مسیر")) return [];
+      return splitPaths(raw)
+        .map(cleanFaText)
+        .filter(p => p && p !== "—" && normKey(p) !== normKey(COL.path));
+    }
+
+    function splitTeachers(cell){
+      const raw = cleanFaText(cell);
+      if (!raw) return [];
+      const parts = raw.includes("/")
+        ? raw.split("/").map(x => cleanFaText(x))
+        : [raw];
+
+      return parts
+        .map(x => cleanFaText(x))
+        .filter(x => x && x !== "—");
+    }
+
+    function escapeRegExp(str){
+      return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function hexToRgb(hex){
+      const h = String(hex || "").replace("#","").trim();
+      if (h.length === 3){
+        const r = parseInt(h[0]+h[0], 16);
+        const g = parseInt(h[1]+h[1], 16);
+        const b = parseInt(h[2]+h[2], 16);
+        return {r,g,b};
+      }
+      if (h.length !== 6) return null;
+      const r = parseInt(h.slice(0,2), 16);
+      const g = parseInt(h.slice(2,4), 16);
+      const b = parseInt(h.slice(4,6), 16);
+      return {r,g,b};
+    }
+    function rgba(hex, a){
+      const rgb = hexToRgb(hex);
+      if (!rgb) return `rgba(255,255,255,${a})`;
+      return `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
+    }
+    function cellBg(color, strength){
+      const a = strength === "strong" ? 0.32 : strength === "mid" ? 0.24 : 0.18;
+      return rgba(color, a);
+    }
+
+    function pickColorByRules(value, rules, fallback){
+      const s = String(value ?? "").trim();
+      for (const r of rules){
+        if (r.re.test(s)) return r.color;
+      }
+      return fallback;
+    }
+
+    // ===============================
+    // Excel Parsing
+    // ===============================
+    function parseSheetToRows(sheet){
+      const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+      if (!aoa || aoa.length === 0) return { headers: [], data: [] };
+
+      const headers = (aoa[0] || []).map(h => cleanFaText(h));
+      const rowsRaw = aoa.slice(1);
+
+      let rows = rowsRaw.map(arr => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = (arr[i] ?? ""));
+        return obj;
+      });
+
+      const normHeaders = headers.map(h => normKey(h));
+      const isHeaderLike = (rowObj) => {
+        let hits = 0;
+        for (const h of headers) {
+          const v = cleanFaText(rowObj[h]);
+          if (v && normHeaders.includes(normKey(v))) hits++;
+        }
+        return hits >= Math.max(3, Math.floor(headers.length * 0.35));
+      };
+      if (rows.length && isHeaderLike(rows[0])) rows = rows.slice(1);
+
+      rows = rows.filter(r => Object.values(r).some(v => cleanFaText(v) !== ""));
+      return { headers, data: rows };
+    }
+
+    async function loadWorkbookFromUrl(path){
+      const res = await fetch(path, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const buf = await res.arrayBuffer();
+      return XLSX.read(buf, { type: "array", cellDates: true });
+    }
+
+    async function loadWorkbookAuto(){
+      setStatus("", "در حال لود فایل داشبورد…");
+      try{
+        for (const p of DEFAULT_XLSX_PATHS){
+          try{
+            WORKBOOK = await loadWorkbookFromUrl(p);
+            setStatus("ok", `فایل لود شد: ${p}`);
+            initFromWorkbook();
+            return;
+          }catch(e){
+            // مسیر بعدی را تست کن
+          }
+        }
+        throw new Error("No default file found");
+      }catch(err){
+        console.error(err);
+        WORKBOOK = null;
+        setStatus("bad", "فایل Dashboard.xlsx لود نشد");
+        showToast(
+          "فایل Dashboard.xlsx باید کنار HTML باشد. " +
+          "نکته مهم: برای اینکه مرورگر بتواند فایل را بخواند، صفحه را با یک سرور محلی باز کنید (مثلاً python -m http.server) " +
+          "و سپس آدرس را با http://localhost باز کنید؛ با file:// معمولاً fetch به فایل لوکال دسترسی ندارد."
+        );
+        setSchoolMode(false);
+      }
+    }
+
+    function initFromWorkbook(){
+      if (!WORKBOOK || !WORKBOOK.SheetNames || WORKBOOK.SheetNames.length === 0){
+        setStatus("bad", "هیچ شیتی پیدا نشد");
+        return;
+      }
+
+      SCHOOLS = WORKBOOK.SheetNames
+        .map(name => (name || "").trim())
+        .filter(Boolean)
+        .map(title => ({ code: title, name: title }))
+        .sort((a,b) => a.name.localeCompare(b.name, "fa"));
+
+      $("#kpiTotalSchools").textContent = SCHOOLS.length.toLocaleString("fa-IR");
+
+      buildSchoolSelect();
+      computeGlobalStatsFromWorkbook();
+
+      setSchoolMode(false);
+      setStatus("ok", "آماده انتخاب مدرسه");
+    }
+
+    // ===============================
+    // School Select (Dynamic)
+    // ===============================
+    function buildSchoolSelect() {
+      const container = $("#filtersCard");
+      if ($("#schoolSelect")) {
+        const sel = $("#schoolSelect");
+        sel.innerHTML = `
+          <option value="">انتخاب مدرسه...</option>
+          ${SCHOOLS.map(s => `<option value="${escapeHtml(s.code)}">${escapeHtml(s.name)}</option>`).join("")}
+        `;
+        return;
+      }
+
+      const schoolField = document.createElement("div");
+      schoolField.className = "field";
+      schoolField.innerHTML = `
+        <label class="flabel" for="schoolSelect">مدرسه</label>
+        <select id="schoolSelect">
+          <option value="">انتخاب مدرسه...</option>
+          ${SCHOOLS.map(s => `<option value="${escapeHtml(s.code)}">${escapeHtml(s.name)}</option>`).join("")}
+        </select>
+      `;
+      container.insertBefore(schoolField, container.querySelectorAll(".field.wide")[0]);
+
+      $("#schoolSelect").addEventListener("change", (e) => {
+        selectedSchool = e.target.value;
+        if (selectedSchool) {
+          const name = SCHOOLS.find(s => s.code === selectedSchool)?.name || selectedSchool;
+          $("#dashboardTitle").textContent = `داشبورد دوره‌های ${name}`;
+          loadDataFromWorkbook(selectedSchool);
+          setSchoolMode(true);
+        } else {
+          $("#dashboardTitle").textContent = "داشبورد دوره‌های آکادمی همراه اول";
+          RAW = { headers: [], data: [] };
+          FILTERED = [];
+          setSchoolMode(false);
+          renderEmptySchoolArea();
+        }
+      });
+    }
+
+    // ===============================
+    // Load one sheet
+    // ===============================
+    function loadDataFromWorkbook(sheetName){
+      if (!WORKBOOK) {
+        setStatus("bad", "فایل داشبورد لود نشده");
+        showToast("فایل Dashboard.xlsx لود نشده است.");
+        return;
+      }
+
+      setStatus("", "در حال بارگذاری شیت…");
+      try{
+        const sheet = WORKBOOK.Sheets[sheetName];
+        if (!sheet){
+          setStatus("bad", "شیت پیدا نشد");
+          showToast("این شیت در فایل اکسل وجود ندارد");
+          return;
+        }
+
+        const parsed = parseSheetToRows(sheet);
+        RAW = { headers: parsed.headers, data: parsed.data };
+        processData();
+        setStatus("ok", "لود شد");
+      }catch(err){
+        console.error(err);
+        setStatus("bad", "خطا در لود شیت");
+        showToast("خطا در خواندن شیت");
+      }
+    }
+
+    function renderEmptySchoolArea(){
+      $("#kpiRunOrPublished").textContent = "—";
+      $("#kpiRecording").textContent = "—";
+      $("#kpiEditing").textContent = "—";
+      $("#kpiProposedOrReview").textContent = "—";
+      $("#kpiApproved").textContent = "—";
+      $("#kpiTeachers").textContent = "—";
+      $("#kpiPaths").textContent = "—";
+      $("#kpiUpdated").textContent = "—";
+
+      $("#theadRow").innerHTML = "";
+      $("#tbody").innerHTML = "";
+      $("#tableMeta").textContent = "—";
+      $("#pageInfo").textContent = "—";
+
+      if (CHART_COURSE){ CHART_COURSE.destroy(); CHART_COURSE = null; }
+      if (CHART_CONTRACT){ CHART_CONTRACT.destroy(); CHART_CONTRACT = null; }
+      $("#sumCourseStatus").innerHTML = "";
+      $("#sumContractStatus").innerHTML = "";
+    }
+
+    function processData() {
+      buildDynamicPathRules();
+      FILTERED = [...RAW.data];
+      PAGE = 1;
+      DASH_UPDATED_AT = new Date();
+
+      MASTER.courseStatus = buildMasterKeys(RAW.data.map(r => r[COL.courseStatus]));
+      MASTER.contractStatus = buildMasterKeys(RAW.data.map(r => r[COL.contractStatus]));
+
+      selectedPaths = [];
+      buildFilters();
+      buildPageSize();
+      computeKPIs(FILTERED);
+      renderCharts(FILTERED);
+      renderTable();
+    }
+
+    // ===============================
+    // Global KPIs from all sheets
+    // ===============================
+    function isCountableCourseStatus(statusRaw){
+      const st = normKey(statusRaw);
+      const isPublished = st.includes("منتشر") || st.includes("انتشار");
+      const isRecording =
+        st.includes("در حال ضبط") || st.includes("ضبطی") || st === normKey("درحال ضبط");
+      return isPublished || isRecording;
+    }
+
+    function computeGlobalStatsFromWorkbook() {
+      ALL_PATHS_SET = new Set();
+      ALL_COURSES_SET = new Set();
+
+      const allTeachersNames = new Set();
+      const courseSecondsById = new Map(); // courseId -> seconds (Unique)
+
+      if (!WORKBOOK || SCHOOLS.length === 0) {
+        $("#kpiTotalAllPaths").textContent = "0";
+        $("#kpiTotalCourses").textContent = "0";
+        $("#kpiTotalTeachers").textContent = "0";
+        $("#kpiTotalHours").textContent = "0";
+        return;
+      }
+
+      for (const school of SCHOOLS) {
+        try {
+          const sheet = WORKBOOK.Sheets[school.code];
+          if (!sheet) continue;
+
+          const parsed = parseSheetToRows(sheet);
+          const headers = parsed.headers;
+          const data = parsed.data;
+
+          if (!headers.length || !data.length) continue;
+
+          const courseIdKey = resolveColKey(headers, COL.courseId);
+          const statusKey   = resolveColKey(headers, COL.courseStatus);
+          const pathKey     = resolveColKey(headers, COL.path);
+          const teacherKey  = resolveColKey(headers, COL.teacher);
+          const durationKey = resolveColKey(headers, "مدت زمان کل");
+
+          data.forEach((obj) => {
+            splitValidPaths(obj[pathKey]).forEach(p => {
+              const k = normKey(p);
+              if (k) ALL_PATHS_SET.add(k);
+            });
+
+            const cid = normKey(obj[courseIdKey]);
+            const statusRaw = obj[statusKey] || "";
+            if (cid && cid !== normKey("آیدی دوره") && isCountableCourseStatus(statusRaw)) {
+              ALL_COURSES_SET.add(cid);
+
+              const seconds = parseDurationToSeconds(obj[durationKey]);
+              if (seconds > 0) {
+                const prev = courseSecondsById.get(cid) || 0;
+                if (!courseSecondsById.has(cid) || seconds > prev) {
+                  courseSecondsById.set(cid, seconds);
+                }
+              }
+            }
+
+            splitTeachers(obj[teacherKey]).forEach(t => {
+              const cleaned = cleanFaText(t);
+              if (cleaned && cleaned !== "—") allTeachersNames.add(normKey(cleaned));
+            });
+          });
+
+        } catch (err) {
+          console.warn("خطا در پردازش شیت:", school.code, err);
+        }
+      }
+
+      $("#kpiTotalAllPaths").textContent = ALL_PATHS_SET.size.toLocaleString("fa-IR");
+      $("#kpiTotalCourses").textContent = ALL_COURSES_SET.size.toLocaleString("fa-IR");
+      $("#kpiTotalTeachers").textContent = allTeachersNames.size.toLocaleString("fa-IR");
+
+      let sumSeconds = 0;
+      for (const sec of courseSecondsById.values()) sumSeconds += (sec || 0);
+
+      // Requested: show HH:MM (not HH:MM:SS)
+      $("#kpiTotalHours").textContent = formatSecondsToHM_Fa(sumSeconds);
+    }
+
+    // ===============================
+    // Paths
+    // ===============================
+    function getAllUniquePaths(){
+      const m = new Map();
+      (RAW.data || []).forEach(row => {
+        splitValidPaths(row[COL.path]).forEach(p => {
+          const k = normKey(p);
+          if (!k) return;
+          if (!m.has(k)) m.set(k, p);
+        });
+      });
+      const arr = Array.from(m.entries()).map(([norm, display]) => ({norm, display}));
+      arr.sort((a,b) => a.display.localeCompare(b.display, "fa"));
+      return arr;
+    }
+
+    function buildDynamicPathRules(){
+      const paths = getAllUniquePaths().map(x => x.display);
+      PATH_RULES = paths.map((p, i) => ({
+        re: new RegExp(`^\\s*${escapeRegExp(p)}\\s*$`, "i"),
+        color: PATH_COLOR_PALETTE[i % PATH_COLOR_PALETTE.length]
+      }));
+    }
+
+    function buildMasterKeys(values, extra = []){
+      const m = new Map();
+      [...(values || []), ...(extra || [])].forEach(v => {
+        const raw = String(v ?? "").trim();
+        const disp = raw ? raw : "—";
+        const k = normKey(disp);
+        if (!m.has(k)) m.set(k, disp);
+      });
+      const dashK = normKey("—");
+      if (!m.has(dashK)) m.set(dashK, "—");
+      return Array.from(m.entries()).map(([kNorm, display]) => ({ kNorm, display }));
+    }
+
+    function countMapNorm(items, key){
+      const m = new Map();
+      (items || []).forEach(it => {
+        const raw = String(it[key] ?? "").trim();
+        const disp = raw ? raw : "—";
+        const k = normKey(disp);
+        m.set(k, (m.get(k) || 0) + 1);
+      });
+      return m;
+    }
+
+    function entriesFromMaster(masterArr, counts){
+      const out = masterArr.map(x => [x.display, counts.get(x.kNorm) || 0]);
+      out.sort((a,b) => (b[1]-a[1]) || a[0].localeCompare(b[0], "fa"));
+      return out;
+    }
+
+    // ===============================
+    // Path Dropdown
+    // ===============================
+    function updatePathButton(){
+      const count = selectedPaths.length;
+      $("#pathSelectedCount").textContent = count;
+
+      if (count === 0){
+        $("#pathSelectedText").textContent = "همه مسیرها";
+        return;
+      }
+
+      const selectedDisplays = selectedPaths
+        .map(n => PATH_OPTIONS.find(x => x.norm === n)?.display)
+        .filter(Boolean);
+
+      const compact = selectedDisplays.length <= 2
+        ? selectedDisplays.join("، ")
+        : `${selectedDisplays.slice(0,2).join("، ")} و ${selectedDisplays.length - 2} مورد دیگر`;
+
+      $("#pathSelectedText").textContent = compact || `${count} مسیر انتخاب شده`;
+    }
+
+    function buildPathDropdown(){
+      PATH_OPTIONS = getAllUniquePaths();
+      const list = $("#pathCheckboxList");
+
+      list.innerHTML = PATH_OPTIONS.map((opt, i) => {
+        const checked = selectedPaths.includes(opt.norm) ? "checked" : "";
+        return `
+          <li class="path-checkbox-item" data-cb="path-cb-${i}">
+            <input type="checkbox" id="path-cb-${i}" data-value="${opt.norm}" ${checked}>
+            <label for="path-cb-${i}">${escapeHtml(opt.display)}</label>
+          </li>`;
+      }).join("");
+
+      list.querySelectorAll(".path-checkbox-item").forEach(li => {
+        li.addEventListener("click", (e) => {
+          const id = li.getAttribute("data-cb");
+          const cb = document.getElementById(id);
+          if (!cb) return;
+          if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "LABEL")) return;
+          cb.checked = !cb.checked;
+          cb.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+      });
+
+      list.querySelectorAll("input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", () => {
+          const val = cb.dataset.value;
+          if (cb.checked) {
+            if (!selectedPaths.includes(val)) selectedPaths.push(val);
+          } else {
+            selectedPaths = selectedPaths.filter(p => p !== val);
+          }
+          updatePathButton();
+          applyFilters();
+        });
+      });
+
+      updatePathButton();
+    }
+
+    function closePathDropdown(){
+      $("#pathDropdown").classList.remove("open");
+      $("#pathDropdownButton").setAttribute("aria-expanded", "false");
+    }
+    function openPathDropdown(){
+      $("#pathDropdown").classList.add("open");
+      $("#pathDropdownButton").setAttribute("aria-expanded", "true");
+      $("#pathSearchInput").focus();
+    }
+    function togglePathDropdown(){
+      const dd = $("#pathDropdown");
+      if (dd.classList.contains("open")) closePathDropdown();
+      else openPathDropdown();
+    }
+
+    $("#pathDropdownButton").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const disabled = $("#pathDropdownButton").getAttribute("aria-disabled") === "true";
+      if (disabled) return;
+      togglePathDropdown();
+    });
+
+    document.addEventListener("click", (e) => {
+      const dd = $("#pathDropdown");
+      if (!dd.classList.contains("open")) return;
+      if ($("#pathDropdownButton").contains(e.target)) return;
+      if (dd.contains(e.target)) return;
+      closePathDropdown();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePathDropdown();
+    });
+
+    $("#pathSearchInput").addEventListener("input", (e) => {
+      const query = normKey(e.target.value);
+      $("#pathCheckboxList").querySelectorAll(".path-checkbox-item").forEach(item => {
+        const label = item.querySelector("label").textContent;
+        item.classList.toggle("hidden", query ? !normKey(label).includes(query) : false);
+      });
+    });
+
+    $("#pathClearAll").addEventListener("click", () => {
+      selectedPaths = [];
+      $("#pathCheckboxList").querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+      $("#pathSearchInput").value = "";
+      $("#pathCheckboxList").querySelectorAll(".path-checkbox-item").forEach(item => item.classList.remove("hidden"));
+      updatePathButton();
+      applyFilters();
+    });
+
+    // ===============================
+    // Pagination
+    // ===============================
+    function buildPageSize(){
+      const sizes = [10, 20, 50, 100];
+      const sel = $("#pageSize");
+      sel.innerHTML = sizes.map(n => `<option value="${n}">${n.toLocaleString("fa-IR")} ردیف</option>`).join("");
+      sel.value = String(PAGE_SIZE);
+
+      sel.onchange = () => {
+        PAGE_SIZE = parseInt(sel.value, 10) || 10;
+        PAGE = 1;
+        renderTable();
+      };
+    }
+
+    function buildFilters(){ buildPathDropdown(); }
+
+    function rowMatchesPaths(row){
+      if (selectedPaths.length === 0) return true;
+      const cellPathsNorm = splitValidPaths(row[COL.path]).map(normKey);
+      return selectedPaths.every(p => cellPathsNorm.includes(p));
+    }
+
+    function applyFilters(){
+      const q = ($("#q").value || "").trim().toLowerCase();
+
+      FILTERED = (RAW.data || []).filter(r => {
+        const pathMatch = rowMatchesPaths(r);
+        let match = pathMatch;
+
+        if (q) {
+          const hay = Object.values(r).join(" ").toLowerCase();
+          match = match && hay.includes(q);
+        }
+        return match;
+      });
+
+      PAGE = 1;
+      computeKPIs(FILTERED);
+      renderCharts(FILTERED);
+      renderTable();
+    }
+
+    // ===============================
+    // KPIs (School-only)
+    // ===============================
+    function computeKPIs(dataset = FILTERED){
+      const rows = Array.isArray(dataset) ? dataset : [];
+      const norm = (s) => normKey(s);
+      const statuses = rows.map(r => norm(r[COL.courseStatus]));
+
+      const isPublished = (st) => st.includes("منتشر") || st.includes("انتشار");
+      const isRunning   = (st) => st.includes("برگزار");
+      const isRecording = (st) => st.includes("در حال ضبط");
+      const isEditing   = (st) => st.includes("در حال تدوین");
+      const isProposed  = (st) => st.includes("پیشنهاد");
+      const isUnderReview = (st) =>
+        st.includes("در حال بررسی") ||
+        st.includes("در انتظار بررسی") ||
+        st === "بررسی";
+
+      const runOrPublished   = statuses.filter(st => isRunning(st) || isPublished(st)).length;
+      const recording        = statuses.filter(st => isRecording(st)).length;
+      const editing          = statuses.filter(st => isEditing(st)).length;
+      const proposedOrReview = statuses.filter(st => isProposed(st) || isUnderReview(st)).length;
+
+      const approved = rows.filter(r => {
+        const st = norm(r[COL.courseStatus] || "");
+        return (st.includes("تایید") || st.includes("تأیید")) && !(st.includes("عدم") || st.includes("رد"));
+      }).length;
+
+      $("#kpiRunOrPublished").textContent = runOrPublished.toLocaleString("fa-IR");
+      $("#kpiRecording").textContent = recording.toLocaleString("fa-IR");
+      $("#kpiEditing").textContent = editing.toLocaleString("fa-IR");
+      $("#kpiProposedOrReview").textContent = proposedOrReview.toLocaleString("fa-IR");
+      $("#kpiApproved").textContent = approved.toLocaleString("fa-IR");
+
+      const teacherSet = new Set();
+      rows.forEach(r => {
+        splitTeachers(r[COL.teacher]).forEach(t => {
+          const k = norm(t);
+          if (k && k !== "—") teacherSet.add(k);
+        });
+      });
+      $("#kpiTeachers").textContent = teacherSet.size.toLocaleString("fa-IR");
+
+      const pathSet = new Set();
+      rows.forEach(r => {
+        splitValidPaths(r[COL.path]).forEach(p => {
+          const k = norm(p);
+          if (k && k !== "—") pathSet.add(k);
+        });
+      });
+      $("#kpiPaths").textContent = pathSet.size.toLocaleString("fa-IR");
+
+      const d = DASH_UPDATED_AT || new Date();
+      $("#kpiUpdated").textContent = d.toLocaleString("fa-IR");
+    }
+
+    // ===============================
+    // Charts
+    // ===============================
+    if (window.Chart) {
+      Chart.defaults.font.family = '"IRANSans", "IRANSansWeb", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial';
+      Chart.defaults.font.weight = "700";
+      // color set by applyTheme()
+    }
+
+    function topN(entries, n=6){
+      const arr = (entries || []).filter(x => x && x[0] && x[1] > 0);
+      const head = arr.slice(0, n);
+      const tail = arr.slice(n);
+      if (tail.length === 0) return head;
+      const otherSum = tail.reduce((a,b) => a + (b[1] || 0), 0);
+      return [...head, ["سایر", otherSum]];
+    }
+
+    function buildDoughnutData(entries, rulesForColor){
+      const filtered = (entries || [])
+        .filter(([k,v]) => String(k).trim() !== "—" && v > 0);
+
+      const slim = topN(filtered, 6);
+      const labels = slim.map(x => x[0]);
+      const values = slim.map(x => x[1]);
+      const colors = slim.map(([k]) => pickColorByRules(k, rulesForColor || [], BRAND.deep));
+      return { labels, values, colors, raw: filtered };
+    }
+
+    function renderSummary(containerEl, rawEntries, colorRules = []){
+      const el = (typeof containerEl === "string") ? $(containerEl) : containerEl;
+
+      const entries = (rawEntries || [])
+        .slice()
+        .filter(([k,v]) => String(k).trim() !== "—" && v > 0);
+
+      const total = entries.reduce((a,b) => a + (b[1] || 0), 0) || 1;
+      const view = topN(entries, 5);
+
+      el.innerHTML = view.map(([k,v]) => {
+        const pct = Math.round((v / total) * 100);
+        const c = pickColorByRules(k, colorRules, BRAND.deep);
+
+        return `
+          <div class="summary-row"
+               style="
+                 border-color: ${rgba(c, .35)};
+                 box-shadow: inset 0 0 0 999px ${rgba(c, .10)};
+               ">
+            <div class="name" style="display:flex;align-items:center;gap:10px;">
+              <span style="
+                width:10px;height:10px;border-radius:999px;
+                background:${c};
+                box-shadow: 0 0 0 4px ${rgba(c,.18)};
+                flex:0 0 auto;
+              "></span>
+              <span>${escapeHtml(k)}</span>
+            </div>
+
+            <div class="val" style="color:${c}; font-weight:950;">
+              ${v.toLocaleString("fa-IR")}
+            </div>
+
+            <div class="pct" style="color:${rgba(c,.95)}; font-weight:900;">
+              ${pct}%
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function ensureDoughnutChart(canvasId, chartRef, dataObj){
+      if (!window.Chart) return null;
+
+      const el = document.getElementById(canvasId);
+      if (!el) return null;
+
+      const ctx = el.getContext("2d");
+      if (chartRef){
+        chartRef.data.labels = dataObj.labels;
+        chartRef.data.datasets[0].data = dataObj.values;
+        chartRef.data.datasets[0].backgroundColor = dataObj.colors;
+        chartRef.update();
+        return chartRef;
+      }
+
+      return new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: dataObj.labels,
+          datasets: [{
+            data: dataObj.values,
+            backgroundColor: dataObj.colors,
+            borderColor: "rgba(255,255,255,.12)",
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "62%",
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context){
+                  const v = context.parsed || 0;
+                  const total = dataObj.values.reduce((a,b) => a + b, 0) || 1;
+                  const pct = Math.round((v / total) * 100);
+                  return ` ${context.label}: ${v.toLocaleString("fa-IR")} (${pct}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderCharts(dataset = FILTERED){
+      const rows = dataset || [];
+
+      const c1 = countMapNorm(rows, COL.courseStatus);
+      const entriesCourse = entriesFromMaster(MASTER.courseStatus, c1);
+      const dCourse = buildDoughnutData(entriesCourse, COURSE_STATUS_RULES);
+      CHART_COURSE = ensureDoughnutChart("pieCourseStatus", CHART_COURSE, dCourse);
+      renderSummary("#sumCourseStatus", entriesCourse, COURSE_STATUS_RULES);
+
+      const c2 = countMapNorm(rows, COL.contractStatus);
+      const entriesContract = entriesFromMaster(MASTER.contractStatus, c2);
+      const dContract = buildDoughnutData(entriesContract, CONTRACT_STATUS_RULES);
+      CHART_CONTRACT = ensureDoughnutChart("pieContractStatus", CHART_CONTRACT, dContract);
+      renderSummary("#sumContractStatus", entriesContract, CONTRACT_STATUS_RULES);
+    }
+
+    // ===============================
+    // Table
+    // ===============================
+    function colMinWidthCss(h){
+      const w = COL_MIN_WIDTH[h];
+      return w ? `min-width:${w}px;` : "";
+    }
+
+    function renderTable(){
+      const headers = RAW.headers || [];
+      $("#theadRow").innerHTML = headers.map(h => `<th style="${colMinWidthCss(h)}">${escapeHtml(h)}</th>`).join("");
+
+      const total = FILTERED.length;
+      const maxPage = Math.max(1, Math.ceil(total / PAGE_SIZE));
+      if (PAGE > maxPage) PAGE = maxPage;
+
+      const start = (PAGE - 1) * PAGE_SIZE;
+      const end = Math.min(start + PAGE_SIZE, total);
+      const rows = FILTERED.slice(start, end);
+
+      $("#tableMeta").textContent = total
+        ? `نمایش ${start + 1} تا ${end} از ${total.toLocaleString("fa-IR")} ردیف (پس از فیلتر)`
+        : `هیچ ردیفی مطابق فیلترها یافت نشد`;
+
+      $("#tbody").innerHTML = rows.map(r => {
+        const pathVal = cleanFaText(r[COL.path] ?? "");
+        const courseStatusVal = cleanFaText(r[COL.courseStatus] ?? "");
+
+        const rowBase = normKey(pathVal).includes("خارج از مسیر")
+          ? BRAND.deep
+          : pickColorByRules(pathVal, PATH_RULES, BRAND.deep);
+
+        const statusColor = pickColorByRules(courseStatusVal, COURSE_STATUS_RULES, rowBase);
+
+        return `<tr>${headers.map(h => {
+          let v = r[h] ?? "";
+
+          let bgCss = cellBg(rowBase, "soft");
+          if (h === COL.path) bgCss = cellBg(rowBase, "strong");
+          if (h === COL.courseStatus) bgCss = cellBg(statusColor, "strong");
+          if (h === COL.title) bgCss = cellBg(rowBase, "mid");
+
+          const tdStyle = `style="background:${bgCss};${colMinWidthCss(h)}"`;
+
+          if (h === COL.resume && isProbablyUrl(v)){
+            return `<td ${tdStyle}><a class="link cell-link" href="${v}" target="_blank" rel="noopener">لینک</a></td>`;
+          }
+          return `<td ${tdStyle}>${escapeHtml(v)}</td>`;
+        }).join("")}</tr>`;
+      }).join("");
+
+      $("#pageInfo").textContent = `${PAGE} / ${maxPage}`;
+    }
+
+    // ===============================
+    // Events
+    // ===============================
+    $("#q").addEventListener("input", () => {
+      if (!selectedSchool) return;
+      applyFilters();
+    });
+
+    $("#prevPage").addEventListener("click", () => {
+      if (!selectedSchool) return;
+      if (PAGE > 1) { PAGE--; renderTable(); }
+    });
+
+    $("#nextPage").addEventListener("click", () => {
+      if (!selectedSchool) return;
+      const maxPage = Math.max(1, Math.ceil(FILTERED.length / PAGE_SIZE));
+      if (PAGE < maxPage) { PAGE++; renderTable(); }
+    });
+
+    $("#btnReload").addEventListener("click", async () => {
+      await loadWorkbookAuto();
+      if (WORKBOOK && selectedSchool){
+        loadDataFromWorkbook(selectedSchool);
+        setSchoolMode(true);
+      }
+    });
+
+    $("#btnReset").addEventListener("click", () => {
+      $("#q").value = "";
+      selectedPaths = [];
+      closePathDropdown();
+
+      $("#pathSearchInput").value = "";
+      $("#pathCheckboxList").querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+      $("#pathCheckboxList").querySelectorAll(".path-checkbox-item").forEach(item => item.classList.remove("hidden"));
+      updatePathButton();
+
+      PAGE = 1;
+      if (selectedSchool) applyFilters();
+    });
+
+    // Theme switch events
+    $("#themeToggle").addEventListener("change", (e) => {
+      applyTheme(e.target.checked ? "light" : "dark");
+      // If charts exist, re-render to ensure canvas picks new defaults properly
+      if (selectedSchool && FILTERED.length) renderCharts(FILTERED);
+    });
+
+    // ===============================
+    // Boot
+    // ===============================
+    (function boot(){
+      initTheme();
+
+      if (!window.XLSX){
+        setStatus("bad", "xlsx.full.min.js لود نشده");
+        showToast("فایل xlsx.full.min.js کنار HTML نیست یا مسیرش اشتباه است");
+        return;
+      }
+      if (!window.Chart){
+        console.warn("Chart.js لود نشده است (chart.umd.min.js).");
+      }
+
+      setSchoolMode(false);
+      renderEmptySchoolArea();
+
+      loadWorkbookAuto();
+    })();
+  </script>
 </body>
 </html>

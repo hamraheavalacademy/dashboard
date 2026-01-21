@@ -5,28 +5,23 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>داشبورد دوره‌های آکادمی همراه اول</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/iransans-font@v1.0/dist/font-face.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- فایل‌ها را لوکال کنار همین HTML بگذار -->
+  <script src="chart.umd.min.js"></script>
+  <script src="xlsx.full.min.js"></script>
 
   <style>
     :root{
       --brand-blue: #0095da;
       --brand-orange:#ff4f00;
       --brand-deep: #295cab;
-      --brand-black:#000000;
 
       --bg:#050a14;
       --card:#0b1733;
-      --card2:#08132a;
 
       --text:#f2f7ff;
       --muted:#b6c4d7;
 
       --line:rgba(0,149,218,.18);
-      --line2:rgba(255,255,255,.10);
-
-      --accent:var(--brand-blue);
-      --accent2:var(--brand-deep);
 
       --bad:#ff6b6b;
       --good:#36d399;
@@ -172,6 +167,12 @@
     .card.filters{
       overflow: visible;
       z-index: 50;
+      grid-column: span 12;
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px 12px;
+      align-items:flex-end;
+      position:relative;
     }
 
     .kpi{
@@ -189,11 +190,6 @@
       display:flex;
       align-items:center;
       gap:8px;
-    }
-    .kpi .label i{
-      font-size: 14px;
-      opacity: .9;
-      color: var(--accent);
     }
     .kpi .value{
       font-size:28px;
@@ -227,28 +223,9 @@
     .kpi.kpi-global::before{
       background: radial-gradient(900px 220px at 20% 0%, rgba(255,79,0,.14), transparent 55%);
     }
-    .kpi.kpi-global .label{
-      color: rgba(255,255,255,.88);
-    }
-    .kpi.kpi-global .label i{
-      color: var(--warn);
-    }
-    .kpi.kpi-global .hint{
-      color: rgba(255,255,255,.72);
-    }
-    .kpi.kpi-global .value{
-      color:#fff;
-    }
-
-    .filters{
-      grid-column: span 12;
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px 12px;
-      align-items:flex-end;
-      position:relative;
-      z-index:1;
-    }
+    .kpi.kpi-global .label{ color: rgba(255,255,255,.88); }
+    .kpi.kpi-global .hint{ color: rgba(255,255,255,.72); }
+    .kpi.kpi-global .value{ color:#fff; }
 
     .field{
       display:flex;
@@ -287,7 +264,7 @@
       font-size:13px;
       outline:none;
       min-width:180px;
-      transition: border-color .18s ease, box-shadow .18s ease;
+      transition: border-color .18s ease, box-shadow .18s ease, opacity .18s ease;
       font-family: var(--font);
     }
     .input::placeholder{color:rgba(182,196,215,.70)}
@@ -298,6 +275,11 @@
         0 0 0 7px rgba(255,79,0,.08);
     }
     select{cursor:pointer}
+
+    .input:disabled, select:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
 
     #pathDropdownButton{
       background:rgba(8,19,42,.70);
@@ -317,6 +299,10 @@
     }
     #pathDropdownButton:hover{ border-color:rgba(0,149,218,.55); }
     #pathDropdownButton svg{ width:18px; height:18px; opacity:.9; }
+    #pathDropdownButton[aria-disabled="true"]{
+      opacity:.55;
+      cursor:not-allowed;
+    }
 
     #pathDropdown{
       position:absolute;
@@ -350,19 +336,6 @@
       font-size:13px;
       font-family: var(--font);
     }
-    #pathSearchInput:focus{
-      outline:none;
-      border-color:rgba(0,149,218,.6);
-    }
-    .path-search-icon{
-      position:absolute;
-      left:14px;
-      top:50%;
-      transform:translateY(-50%);
-      pointer-events:none;
-      opacity:.85;
-    }
-    .path-search-icon svg{ width:18px; height:18px; }
 
     .path-list-wrap{
       max-height:280px;
@@ -372,18 +345,6 @@
       border-radius: 14px;
       scrollbar-width: thin;
       scrollbar-color: rgba(0,149,218,.85) rgba(8,19,42,.65);
-    }
-
-    .path-list-wrap::-webkit-scrollbar{ width: 10px; }
-    .path-list-wrap::-webkit-scrollbar-track{
-      background: rgba(8,19,42,.65);
-      border: 1px solid rgba(0,149,218,.18);
-      border-radius: 999px;
-    }
-    .path-list-wrap::-webkit-scrollbar-thumb{
-      background: linear-gradient(90deg, rgba(41,92,171,.95), rgba(0,149,218,.85));
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 999px;
     }
 
     .path-checkbox-item{
@@ -397,18 +358,9 @@
     }
     .path-checkbox-item:hover{ background:rgba(0,149,218,.15); }
     .path-checkbox-item input[type="checkbox"]{
-      width:18px;
-      height:18px;
-      accent-color:#0095da;
-      cursor:pointer;
-      margin:0;
+      width:18px;height:18px;accent-color:#0095da;cursor:pointer;margin:0;
     }
-    .path-checkbox-item label{
-      cursor:pointer;
-      font-size:13px;
-      flex:1;
-      user-select:none;
-    }
+    .path-checkbox-item label{ cursor:pointer; font-size:13px; flex:1; user-select:none; }
     .path-checkbox-item.hidden{ display:none; }
 
     #pathFooter{
@@ -427,7 +379,6 @@
       user-select:none;
       white-space:nowrap;
     }
-    #pathClearAll:hover{ color:#ff6b6b; }
 
     .btn{
       cursor:pointer;
@@ -450,10 +401,6 @@
       border:1px solid rgba(255,255,255,.10);
       color:rgba(242,247,255,.92);
       box-shadow:none;
-    }
-    .btn.secondary:hover{
-      border-color: rgba(0,149,218,.26);
-      background:rgba(8,19,42,.70);
     }
 
     .chart{
@@ -490,16 +437,9 @@
       border:1px solid rgba(0,149,218,.16);
       background: rgba(8,19,42,.22);
     }
-    .chart-canvas canvas{
-      width:100% !important;
-      height:100% !important;
-    }
+    .chart-canvas canvas{ width:100% !important; height:100% !important; }
 
-    .chart-summary{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
+    .chart-summary{ display:flex; flex-direction:column; gap:10px; }
     .summary-row{
       display:flex;
       align-items:center;
@@ -534,11 +474,7 @@
       white-space:nowrap;
     }
 
-    .table-wrap{
-      grid-column: span 12;
-      padding:0;
-      overflow:hidden;
-    }
+    .table-wrap{ grid-column: span 12; padding:0; overflow:hidden; }
     .table-top{
       padding:12px 14px;
       display:flex;
@@ -546,19 +482,10 @@
       align-items:center;
       gap:10px;
       border-bottom:1px solid rgba(0,149,218,.16);
-      background:
-        linear-gradient(90deg, rgba(41,92,171,.20), rgba(8,19,42,.38));
+      background: linear-gradient(90deg, rgba(41,92,171,.20), rgba(8,19,42,.38));
     }
-    .table-top .meta{
-      color:rgba(182,196,215,.92);
-      font-size:12px;
-    }
-    .pager{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
+    .table-top .meta{ color:rgba(182,196,215,.92); font-size:12px; }
+    .pager{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
 
     table{
       width: max-content;
@@ -573,8 +500,7 @@
       position:sticky;
       top:0;
       z-index:2;
-      background:
-        linear-gradient(90deg, rgba(41,92,171,.35), rgba(0,149,218,.18));
+      background: linear-gradient(90deg, rgba(41,92,171,.35), rgba(0,149,218,.18));
       backdrop-filter: blur(10px);
       border-bottom:1px solid rgba(0,149,218,.18);
       padding:10px 10px;
@@ -592,23 +518,15 @@
       color:rgba(242,247,255,.95);
       transition: box-shadow .16s ease, filter .16s ease;
     }
-    tbody tr:hover td{
-      box-shadow: inset 0 0 0 9999px rgba(0,149,218,.08);
-    }
+    tbody tr:hover td{ box-shadow: inset 0 0 0 9999px rgba(0,149,218,.08); }
 
     .muted{color:var(--muted)}
-
     .link{
-      color:var(--accent);
+      color:var(--brand-blue);
       text-decoration:none;
       border-bottom:1px dashed rgba(0,149,218,.55);
     }
-    .link:hover{
-      border-bottom-style:solid;
-      border-bottom-color: rgba(255,79,0,.75);
-    }
     .cell-link{ color: inherit !important; border-bottom-color: currentColor !important; opacity:.92; }
-    .cell-link:hover{ opacity:1; }
 
     .toast{
       margin-top:10px;
@@ -620,6 +538,7 @@
       font-size:12.5px;
       display:none;
       backdrop-filter: blur(8px);
+      grid-column: span 12;
     }
     .toast.show{display:block}
 
@@ -630,17 +549,13 @@
       border-radius: 14px;
       background: rgba(8,19,42,.25);
     }
-    .table-scroll::-webkit-scrollbar{ height: 10px; }
-    .table-scroll::-webkit-scrollbar-track{
-      background: rgba(8,19,42,.65);
-      border: 1px solid rgba(0,149,218,.18);
-      border-radius: 999px;
-    }
-    .table-scroll::-webkit-scrollbar-thumb{
-      background: linear-gradient(90deg, rgba(41,92,171,.95), rgba(0,149,218,.85));
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 999px;
-    }
+
+    /* فقط بعد از انتخاب مدرسه نمایش داده شود */
+    .school-only{ display:none; }
+    .school-only.show{ display:flex; }
+    .school-only.show.table-wrap{ display:block; }
+    .school-only.show.chart{ display:flex; }
+    .school-only.show.kpi{ display:flex; }
 
     @media (max-width: 980px){
       .kpi{grid-column: span 6;}
@@ -672,9 +587,9 @@
       </div>
 
       <div class="right-actions">
-        <div class="pill" title="وضعیت اتصال">
+        <div class="pill" title="وضعیت بارگذاری">
           <span id="statusDot" class="dot"></span>
-          <span id="statusText">در حال اتصال…</span>
+          <span id="statusText">در حال لود فایل داشبورد…</span>
         </div>
         <button class="btn secondary" id="btnReload">رفرش داده‌ها</button>
         <button class="btn secondary" id="btnReset">ریست فیلترها</button>
@@ -684,16 +599,15 @@
     <section class="grid">
       <div class="card filters" id="filtersCard">
         <!-- سلکت مدرسه اینجا اضافه میشه -->
-
         <div class="field wide">
           <label class="flabel" for="q">جستجو</label>
-          <input class="input" id="q" placeholder="جستجو (عنوان دوره، نام مدرس، …)" />
+          <input class="input" id="q" placeholder="ابتدا مدرسه را انتخاب کنید…" disabled />
         </div>
 
         <div class="field path-field">
           <label class="flabel">مسیر تخصصی</label>
-          <button id="pathDropdownButton" type="button" aria-expanded="false">
-            <span id="pathSelectedText">همه مسیرها</span>
+          <button id="pathDropdownButton" type="button" aria-expanded="false" aria-disabled="true">
+            <span id="pathSelectedText">ابتدا مدرسه را انتخاب کنید</span>
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
             </svg>
@@ -701,11 +615,6 @@
 
           <div id="pathDropdown" role="dialog" aria-label="انتخاب مسیر تخصصی">
             <div class="path-search-wrap">
-              <span class="path-search-icon" aria-hidden="true">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
-                </svg>
-              </span>
               <input type="text" id="pathSearchInput" placeholder="جستجوی مسیر..." />
             </div>
 
@@ -721,40 +630,35 @@
         </div>
       </div>
 
-      <!-- KPI های کلی (بالا + رنگ متفاوت) -->
+      <!-- KPI های کلی (همیشه نمایش داده می‌شوند) -->
       <div class="card kpi kpi-global">
-        <div class="label"><i class="fa-solid fa-school"></i>تعداد کل مدارس</div>
+        <div class="label">تعداد کل مدارس</div>
         <div class="value" id="kpiTotalSchools">—</div>
-        <div class="hint"><span class="muted">تعداد کل شیت‌ها</span></div>
       </div>
 
       <div class="card kpi kpi-global">
-        <div class="label"><i class="fa-solid fa-route"></i>تعداد کل مسیرها</div>
+        <div class="label">تعداد کل مسیرها</div>
         <div class="value" id="kpiTotalAllPaths">—</div>
-        <div class="hint"><span class="muted">مسیرهای منحصر به فرد در تمام مدارس (بدون «خارج از مسیر»)</span></div>
       </div>
 
       <div class="card kpi kpi-global">
-        <div class="label"><i class="fa-solid fa-book-open"></i>تعداد کل دوره‌ها</div>
+        <div class="label">تعداد کل دوره‌ها</div>
         <div class="value" id="kpiTotalCourses">—</div>
-        <div class="hint"><span class="muted">دوره‌های منحصر به فرد (آیدی دوره)</span></div>
       </div>
 
       <div class="card kpi kpi-global">
-        <div class="label"><i class="fa-solid fa-user-tie"></i>تعداد کل اساتید</div>
+        <div class="label">تعداد کل اساتید</div>
         <div class="value" id="kpiTotalTeachers">—</div>
-        <div class="hint"><span class="muted">اساتید منحصر به فرد (بر اساس نام مدرس + Split روی /)</span></div>
       </div>
 
       <div class="card kpi kpi-global">
-        <div class="label"><i class="fa-solid fa-clock"></i>تعداد کل ساعت دوره‌ها</div>
+        <div class="label">تعداد کل ساعت دوره‌ها</div>
         <div class="value" id="kpiTotalHours">—</div>
-        <div class="hint"><span class="muted">جمع مدت زمان کل تمام دوره‌ها (Unique by آیدی دوره)</span></div>
       </div>
 
-      <!-- KPI های فیلترشده (پایین‌تر) -->
-      <div class="card kpi">
-        <div class="label"><i class="fa-solid fa-play-circle"></i>دوره‌های برگزار‌ شده / منتشر شده</div>
+      <!-- KPI های مدرسه انتخاب‌شده (فقط بعد از انتخاب مدرسه) -->
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">دوره‌های برگزار‌ شده / منتشر شده</div>
         <div class="value" id="kpiRunOrPublished">—</div>
         <div class="hint">
           <span class="badge" id="kpiUpdated">—</span>
@@ -762,49 +666,38 @@
         </div>
       </div>
 
-      <div class="card kpi">
-        <div class="label"><i class="fa-solid fa-video"></i>دوره‌های در حال ضبط</div>
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">دوره‌های در حال ضبط</div>
         <div class="value" id="kpiRecording">—</div>
-        <div class="hint"><span class="badge">وضعیت دوره</span><span class="muted">= در حال ضبط</span></div>
       </div>
 
-      <div class="card kpi">
-        <div class="label"><i class="fa-solid fa-pen-to-square"></i>دوره‌های در حال تدوین</div>
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">دوره‌های در حال تدوین</div>
         <div class="value" id="kpiEditing">—</div>
-        <div class="hint"><span class="badge">وضعیت دوره</span><span class="muted">= در حال تدوین</span></div>
       </div>
 
-      <div class="card kpi">
-        <div class="label"><i class="fa-solid fa-lightbulb"></i>پیشنهادی / در حال بررسی</div>
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">پیشنهادی / در حال بررسی</div>
         <div class="value" id="kpiProposedOrReview">—</div>
-        <div class="hint"><span class="badge">وضعیت دوره</span><span class="muted">پیشنهادی + در حال بررسی</span></div>
       </div>
 
-      <div class="card kpi">
-        <div class="label"><i class="fa-solid fa-circle-check"></i>تایید شده</div>
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">تایید شده</div>
         <div class="value" id="kpiApproved">—</div>
-        <div class="hint"><span class="badge">وضعیت دوره</span><span class="muted">= تایید شده</span></div>
       </div>
 
-      <div class="card kpi">
-        <div class="label"><i class="fa-solid fa-chalkboard-user"></i>تعداد اساتید</div>
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">تعداد اساتید</div>
         <div class="value" id="kpiTeachers">—</div>
       </div>
 
-      <div class="card kpi">
-        <div class="label"><i class="fa-solid fa-route"></i>تعداد کل مسیرها</div>
+      <div class="card kpi school-only" data-school-only="1">
+        <div class="label">تعداد کل مسیرها</div>
         <div class="value" id="kpiPaths">—</div>
-        <div class="hint"><span class="muted">بر اساس داده فیلتر شده (بدون «خارج از مسیر»)</span></div>
       </div>
 
-      <div class="card kpi">
-        <div class="label"><i class="fa-solid fa-layer-group"></i>Backlog (در صف تولید)</div>
-        <div class="value" id="kpiBacklog">—</div>
-        <div class="hint"><span class="badge">ضبط + تدوین + پیشنهادی</span><span class="muted">برای کنترل گلوگاه</span></div>
-      </div>
-
-      <!-- چارت‌ها -->
-      <div class="card chart">
+      <!-- چارت‌ها (فقط بعد از انتخاب مدرسه) -->
+      <div class="card chart school-only" data-school-only="1">
         <h3>وضعیت دوره‌ها (سهم/درصد)</h3>
         <div class="chart-grid">
           <div class="chart-canvas">
@@ -814,7 +707,7 @@
         </div>
       </div>
 
-      <div class="card chart">
+      <div class="card chart school-only" data-school-only="1">
         <h3>وضعیت قراردادها (سهم/درصد)</h3>
         <div class="chart-grid">
           <div class="chart-canvas">
@@ -824,7 +717,7 @@
         </div>
       </div>
 
-      <div class="card table-wrap">
+      <div class="card table-wrap school-only" data-school-only="1">
         <div class="table-top">
           <div class="meta" id="tableMeta">—</div>
           <div class="pager">
@@ -847,14 +740,14 @@
     </section>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
   <script>
     // ===============================
-    // تنظیمات اصلی
+    // تنظیمات آفلاین (بدون آپلود)
     // ===============================
-    const SPREADSHEET_ID = "1aYhxTTY5gDC6I6QIxVNq1_6iVoVBdIlM-oe08CxNohE";
-    const API_KEY = "AIzaSyCINscB_4R84tlHqyb4AscVVqpmKB1xZbY"; // اگر داری بذار، اگر نه خالی بذار
+    // فایل اکسل باید کنار همین HTML باشد
+    const DEFAULT_XLSX_PATHS = ["Dashboard.xlsx", "Dashboard.xlxs"];
+
+    let WORKBOOK = null;
 
     let SCHOOLS = [];
     let selectedSchool = null;
@@ -874,11 +767,6 @@
     let selectedPaths = [];
     let PATH_OPTIONS = [];
     const MASTER = { courseStatus: [], contractStatus: [] };
-
-    let TOTAL_SCHOOLS = 0;
-    let TOTAL_ALL_PATHS = 0;
-    let TOTAL_ALL_COURSES = 0;
-    let TOTAL_ALL_TEACHERS = 0;
 
     let ALL_PATHS_SET = new Set();
     let ALL_COURSES_SET = new Set();
@@ -932,7 +820,7 @@
     let CHART_CONTRACT = null;
 
     // ===============================
-    // توابع کمکی
+    // UI helpers
     // ===============================
     function setStatus(type, text){
       statusDot.className = "dot" + (type ? " " + type : "");
@@ -942,9 +830,28 @@
       toast.textContent = msg;
       toast.classList.add("show");
       clearTimeout(showToast._t);
-      showToast._t = setTimeout(() => toast.classList.remove("show"), 4200);
+      showToast._t = setTimeout(() => toast.classList.remove("show"), 6500);
     }
 
+    function setSchoolMode(isOn){
+      document.querySelectorAll("[data-school-only]").forEach(el => {
+        el.classList.toggle("show", !!isOn);
+      });
+
+      $("#q").disabled = !isOn;
+      $("#q").placeholder = isOn ? "جستجو (عنوان دوره، نام مدرس، …)" : "ابتدا مدرسه را انتخاب کنید…";
+
+      const pathBtn = $("#pathDropdownButton");
+      pathBtn.setAttribute("aria-disabled", isOn ? "false" : "true");
+      if (!isOn){
+        $("#pathSelectedText").textContent = "ابتدا مدرسه را انتخاب کنید";
+        closePathDropdown();
+      }
+    }
+
+    // ===============================
+    // Text helpers
+    // ===============================
     function escapeHtml(s){
       return String(s ?? "")
         .replaceAll("&","&amp;")
@@ -977,7 +884,6 @@
         .trim();
     }
 
-    // ---- کلید ستون را در هر شیت با نرمال‌سازی پیدا کن (برای حل مشکل "مدت زمان کل" و ...) ----
     function resolveColKey(headers, wantedLabel){
       const wanted = normKey(wantedLabel);
       const map = new Map();
@@ -985,7 +891,6 @@
       return map.get(wanted) || wantedLabel;
     }
 
-    // ---- تبدیل مقدار Duration به ثانیه (پشتیبانی از number fraction-of-day و رشته HH:MM:SS) ----
     function parseDurationToSeconds(v){
       if (v === null || v === undefined || v === "") return 0;
 
@@ -1027,7 +932,6 @@
       return `${h.toLocaleString("fa-IR")}:${mm}:${ss}`;
     }
 
-    // مسیرها (برای سلول‌های معمولی)
     function splitPaths(cell){
       const s = String(cell ?? "")
         .replace(/\u200c/g, " ")
@@ -1037,27 +941,21 @@
         .trim();
 
       if (!s) return [];
-
-      // فقط جداکننده‌های "لیست" را قبول کن، نه "و"
       return s
         .split(/(?:\s*(?:,|،|؛|;|\||\n|\r)\s*)/g)
         .map(x => x.trim())
         .filter(Boolean);
     }
 
-    // مسیر معتبر: اگر سلول شامل "خارج از مسیر" بود، کلاً مسیرهای آن سلول حذف می‌شوند
     function splitValidPaths(cell){
       const raw = cleanFaText(cell || "");
       if (!raw) return [];
-
       if (normKey(raw).includes("خارج از مسیر")) return [];
-
       return splitPaths(raw)
         .map(cleanFaText)
         .filter(p => p && p !== "—" && normKey(p) !== normKey(COL.path));
     }
 
-    // اساتید: Split فقط روی "/" + حذف خالی‌ها
     function splitTeachers(cell){
       const raw = cleanFaText(cell);
       if (!raw) return [];
@@ -1107,54 +1005,106 @@
     }
 
     // ===============================
-    // لیست مدارس داینامیک (شیت‌ها)
+    // Excel Parsing
     // ===============================
-    async function loadSchoolList() {
-      SCHOOLS = [];
+    function parseSheetToRows(sheet){
+      const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+      if (!aoa || aoa.length === 0) return { headers: [], data: [] };
 
-      setStatus("", "در حال اتصال…");
+      const headers = (aoa[0] || []).map(h => cleanFaText(h));
+      const rowsRaw = aoa.slice(1);
 
-      if (API_KEY && API_KEY !== "YOUR_API_KEY_HERE") {
-        try {
-          const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?key=${API_KEY}&fields=sheets.properties(title)`;
-          const res = await fetch(url);
-          if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-          const json = await res.json();
+      let rows = rowsRaw.map(arr => {
+        const obj = {};
+        headers.forEach((h, i) => obj[h] = (arr[i] ?? ""));
+        return obj;
+      });
 
-          if (json.sheets && json.sheets.length > 0) {
-            SCHOOLS = json.sheets
-              .map(s => {
-                const title = (s.properties.title || "").trim();
-                return { code: title, name: title };
-              })
-              .filter(s => s.code);
-
-            SCHOOLS.sort((a, b) => a.name.localeCompare(b.name, "fa"));
-          }
-        } catch (e) {
-          console.error("خطا در دریافت لیست شیت‌ها از Google Sheets API:", e);
+      const normHeaders = headers.map(h => normKey(h));
+      const isHeaderLike = (rowObj) => {
+        let hits = 0;
+        for (const h of headers) {
+          const v = cleanFaText(rowObj[h]);
+          if (v && normHeaders.includes(normKey(v))) hits++;
         }
-      }
+        return hits >= Math.max(3, Math.floor(headers.length * 0.35));
+      };
+      if (rows.length && isHeaderLike(rows[0])) rows = rows.slice(1);
 
-      if (SCHOOLS.length === 0) {
-        console.info("لیست مدارس بارگذاری نشد. احتمالاً API_KEY اشتباه است یا اتصال مشکل دارد.");
-        setStatus("bad", "خطا در اتصال");
-      } else {
-        setStatus("ok", "متصل شد");
-      }
-
-      TOTAL_SCHOOLS = SCHOOLS.length;
-      if ($("#kpiTotalSchools")) {
-        $("#kpiTotalSchools").textContent = TOTAL_SCHOOLS.toLocaleString("fa-IR");
-      }
-
-      buildSchoolSelect();
-      computeGlobalStats(); // آمار کلی
+      rows = rows.filter(r => Object.values(r).some(v => cleanFaText(v) !== ""));
+      return { headers, data: rows };
     }
 
+    async function loadWorkbookFromUrl(path){
+      const res = await fetch(path, { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const buf = await res.arrayBuffer();
+      return XLSX.read(buf, { type: "array", cellDates: true });
+    }
+
+    async function loadWorkbookAuto(){
+      setStatus("", "در حال لود فایل داشبورد…");
+      try{
+        for (const p of DEFAULT_XLSX_PATHS){
+          try{
+            WORKBOOK = await loadWorkbookFromUrl(p);
+            setStatus("ok", `فایل لود شد: ${p}`);
+            initFromWorkbook();
+            return;
+          }catch(e){
+            // مسیر بعدی را تست کن
+          }
+        }
+        throw new Error("No default file found");
+      }catch(err){
+        console.error(err);
+        WORKBOOK = null;
+        setStatus("bad", "فایل Dashboard.xlsx لود نشد");
+        showToast(
+          "فایل Dashboard.xlsx باید کنار HTML باشد. " +
+          "نکته مهم: برای اینکه مرورگر بتواند فایل را بخواند، صفحه را با یک سرور محلی باز کنید (مثلاً python -m http.server) " +
+          "و سپس آدرس را با http://localhost باز کنید؛ با file:// معمولاً fetch به فایل لوکال دسترسی ندارد."
+        );
+        // حالت اولیه: فقط KPI های کلی (پیش‌فرض‌ها) نمایش داده می‌شود
+        setSchoolMode(false);
+      }
+    }
+
+    function initFromWorkbook(){
+      if (!WORKBOOK || !WORKBOOK.SheetNames || WORKBOOK.SheetNames.length === 0){
+        setStatus("bad", "هیچ شیتی پیدا نشد");
+        return;
+      }
+
+      SCHOOLS = WORKBOOK.SheetNames
+        .map(name => (name || "").trim())
+        .filter(Boolean)
+        .map(title => ({ code: title, name: title }))
+        .sort((a,b) => a.name.localeCompare(b.name, "fa"));
+
+      $("#kpiTotalSchools").textContent = SCHOOLS.length.toLocaleString("fa-IR");
+
+      buildSchoolSelect();
+      computeGlobalStatsFromWorkbook();
+
+      // تا وقتی مدرسه انتخاب نشده، سایر اجزا مخفی بماند
+      setSchoolMode(false);
+      setStatus("ok", "آماده انتخاب مدرسه");
+    }
+
+    // ===============================
+    // School Select (Dynamic)
+    // ===============================
     function buildSchoolSelect() {
       const container = $("#filtersCard");
-      if ($("#schoolSelect")) return;
+      if ($("#schoolSelect")) {
+        const sel = $("#schoolSelect");
+        sel.innerHTML = `
+          <option value="">انتخاب مدرسه...</option>
+          ${SCHOOLS.map(s => `<option value="${escapeHtml(s.code)}">${escapeHtml(s.name)}</option>`).join("")}
+        `;
+        return;
+      }
 
       const schoolField = document.createElement("div");
       schoolField.className = "field";
@@ -1165,64 +1115,75 @@
           ${SCHOOLS.map(s => `<option value="${escapeHtml(s.code)}">${escapeHtml(s.name)}</option>`).join("")}
         </select>
       `;
-      container.insertBefore(schoolField, container.querySelector(".field.wide"));
+      container.insertBefore(schoolField, container.querySelectorAll(".field.wide")[0]);
 
       $("#schoolSelect").addEventListener("change", (e) => {
         selectedSchool = e.target.value;
         if (selectedSchool) {
           const name = SCHOOLS.find(s => s.code === selectedSchool)?.name || selectedSchool;
           $("#dashboardTitle").textContent = `داشبورد دوره‌های ${name}`;
-          loadData(selectedSchool);
+          loadDataFromWorkbook(selectedSchool);
+          setSchoolMode(true);
         } else {
           $("#dashboardTitle").textContent = "داشبورد دوره‌های آکادمی همراه اول";
           RAW = { headers: [], data: [] };
-          processData();
+          FILTERED = [];
+          setSchoolMode(false);
+          renderEmptySchoolArea();
         }
       });
     }
 
     // ===============================
-    // بارگذاری داده یک مدرسه
+    // Load one sheet
     // ===============================
-    async function loadData(sheetName) {
-      setStatus("", "در حال بارگذاری…");
-
-      const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}&rand=${Date.now()}`;
-
-      try {
-        const res = await fetch(GVIZ_URL);
-        const text = await res.text();
-        const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
-
-        const headers = (json.table?.cols || []).map(c => c.label || "");
-        const rowsRaw = (json.table?.rows || []);
-
-        const rows = rowsRaw.map(r => {
-          const obj = {};
-          headers.forEach((h, i) => obj[h] = (r.c[i]?.v ?? ""));
-          return obj;
-        });
-
-        const normHeaders = headers.map(h => normKey(h));
-        const isHeaderLike = (rowObj) => {
-          let hits = 0;
-          for (const h of headers) {
-            const v = cleanFaText(rowObj[h]);
-            if (v && normHeaders.includes(normKey(v))) hits++;
-          }
-          return hits >= Math.max(3, Math.floor(headers.length * 0.35));
-        };
-
-        const data = (rows.length && isHeaderLike(rows[0])) ? rows.slice(1) : rows;
-
-        RAW = { headers, data };
-        processData();
-        setStatus("ok", "متصل شد");
-      } catch (err) {
-        console.error(err);
-        setStatus("bad", "خطا در اتصال");
-        showToast("خطا در دریافت داده‌ها");
+    function loadDataFromWorkbook(sheetName){
+      if (!WORKBOOK) {
+        setStatus("bad", "فایل داشبورد لود نشده");
+        showToast("فایل Dashboard.xlsx لود نشده است.");
+        return;
       }
+
+      setStatus("", "در حال بارگذاری شیت…");
+      try{
+        const sheet = WORKBOOK.Sheets[sheetName];
+        if (!sheet){
+          setStatus("bad", "شیت پیدا نشد");
+          showToast("این شیت در فایل اکسل وجود ندارد");
+          return;
+        }
+
+        const parsed = parseSheetToRows(sheet);
+        RAW = { headers: parsed.headers, data: parsed.data };
+        processData();
+        setStatus("ok", "لود شد");
+      }catch(err){
+        console.error(err);
+        setStatus("bad", "خطا در لود شیت");
+        showToast("خطا در خواندن شیت");
+      }
+    }
+
+    function renderEmptySchoolArea(){
+      // وقتی مدرسه انتخاب نشده، محتوای مدرسه‌محور را خالی نگه می‌داریم
+      $("#kpiRunOrPublished").textContent = "—";
+      $("#kpiRecording").textContent = "—";
+      $("#kpiEditing").textContent = "—";
+      $("#kpiProposedOrReview").textContent = "—";
+      $("#kpiApproved").textContent = "—";
+      $("#kpiTeachers").textContent = "—";
+      $("#kpiPaths").textContent = "—";
+      $("#kpiUpdated").textContent = "—";
+
+      $("#theadRow").innerHTML = "";
+      $("#tbody").innerHTML = "";
+      $("#tableMeta").textContent = "—";
+      $("#pageInfo").textContent = "—";
+
+      if (CHART_COURSE){ CHART_COURSE.destroy(); CHART_COURSE = null; }
+      if (CHART_CONTRACT){ CHART_CONTRACT.destroy(); CHART_CONTRACT = null; }
+      $("#sumCourseStatus").innerHTML = "";
+      $("#sumContractStatus").innerHTML = "";
     }
 
     function processData() {
@@ -1243,7 +1204,7 @@
     }
 
     // ===============================
-    // آمار کلی همه مدارس (Global KPIs)
+    // Global KPIs from all sheets
     // ===============================
     function isCountableCourseStatus(statusRaw){
       const st = normKey(statusRaw);
@@ -1253,24 +1214,14 @@
       return isPublished || isRecording;
     }
 
-    async function computeGlobalStats() {
+    function computeGlobalStatsFromWorkbook() {
       ALL_PATHS_SET = new Set();
       ALL_COURSES_SET = new Set();
 
       const allTeachersNames = new Set();
-      const allCourseTitles  = new Set();
-      const allPathNames     = new Set();
-
-      const courseDurationLog = new Map(); // courseId -> raw display
       const courseSecondsById = new Map(); // courseId -> seconds (Unique)
 
-      // ===== DEBUG / TRACE =====
-      const DEBUG_TRACE_PATHS = true;
-      const DEBUG_FIND_PATH   = "استخدام اسکرام";
-      const pathTrace = [];
-      // =========================
-
-      if (SCHOOLS.length === 0) {
+      if (!WORKBOOK || SCHOOLS.length === 0) {
         $("#kpiTotalAllPaths").textContent = "0";
         $("#kpiTotalCourses").textContent = "0";
         $("#kpiTotalTeachers").textContent = "0";
@@ -1278,214 +1229,65 @@
         return;
       }
 
-      console.log(
-        "%c=== شروع لاگ‌گیری کامل (Global) ===",
-        "font-weight:bold; color:#00d1b2; font-size:16px"
-      );
-
       for (const school of SCHOOLS) {
         try {
-          const GVIZ_URL =
-            `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq` +
-            `?tqx=out:json&sheet=${encodeURIComponent(school.code)}&rand=${Date.now()}`;
+          const sheet = WORKBOOK.Sheets[school.code];
+          if (!sheet) continue;
 
-          const res = await fetch(GVIZ_URL);
-          if (!res.ok) continue;
+          const parsed = parseSheetToRows(sheet);
+          const headers = parsed.headers;
+          const data = parsed.data;
 
-          const text = await res.text();
-          const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+          if (!headers.length || !data.length) continue;
 
-          const headers = (json.table?.cols || []).map(c => c.label || "");
-          const rowsRaw = (json.table?.rows || []);
-          if (!rowsRaw.length) continue;
-
-          // resolve keys (با این کار "مدت زمان کل" هر شکلی باشد پیدا می‌شود)
           const courseIdKey = resolveColKey(headers, COL.courseId);
           const statusKey   = resolveColKey(headers, COL.courseStatus);
           const pathKey     = resolveColKey(headers, COL.path);
-          const titleKey    = resolveColKey(headers, COL.title);
           const teacherKey  = resolveColKey(headers, COL.teacher);
           const durationKey = resolveColKey(headers, "مدت زمان کل");
 
-          let rows = rowsRaw.map(r => {
-            const obj = {};
-            headers.forEach((h, i) => obj[h] = (r.c[i]?.v ?? ""));
-            return obj;
-          });
-
-          // حذف ردیف header-like اگر لازم بود
-          const normHeaders = headers.map(h => normKey(h));
-          const isHeaderLike = (rowObj) => {
-            let hits = 0;
-            for (const h of headers) {
-              const v = cleanFaText(rowObj[h]);
-              if (v && normHeaders.includes(normKey(v))) hits++;
-            }
-            return hits >= Math.max(3, Math.floor(headers.length * 0.35));
-          };
-          const headerLikeRemoved = (rows.length && isHeaderLike(rows[0]));
-          if (headerLikeRemoved) rows = rows.slice(1);
-
-          const baseRowNumber = 2 + (headerLikeRemoved ? 1 : 0);
-
-          rows.forEach((obj, idx) => {
-            const sheetRow = idx + baseRowNumber;
-
-            // ========= مسیرها =========
-            const rawPathCell = cleanFaText(obj[pathKey] || "");
-            const parsedPaths = splitValidPaths(rawPathCell);
-
-            if (DEBUG_TRACE_PATHS) {
-              pathTrace.push({
-                sheet: school.code,
-                row: sheetRow,
-                مسیر_خام: rawPathCell,
-                مسیرهای_پارس_شده: parsedPaths.join(" | "),
-                عنوان_دوره: cleanFaText(obj[titleKey] || ""),
-                نام_مدرس: cleanFaText(obj[teacherKey] || ""),
-                آیدی_دوره: cleanFaText(obj[courseIdKey] || "")
-              });
-            }
-
-            if (normKey(rawPathCell).includes("خارج از مسیر") && rawPathCell) {
-              console.log("[SKIP PATH CELL - خارج از مسیر]", {
-                sheet: school.code,
-                row: sheetRow,
-                rawPathCell
-              });
-            }
-
-            if (DEBUG_FIND_PATH) {
-              const hay = normKey(rawPathCell + " " + parsedPaths.join(" "));
-              if (hay.includes(normKey(DEBUG_FIND_PATH))) {
-                console.warn("[FOUND PATH ISSUE]", {
-                  sheet: school.code,
-                  row: sheetRow,
-                  rawPathCell,
-                  parsedPaths,
-                  courseTitle: cleanFaText(obj[titleKey] || ""),
-                  teacher: cleanFaText(obj[teacherKey] || ""),
-                  courseId: cleanFaText(obj[courseIdKey] || "")
-                });
-              }
-            }
-
-            parsedPaths.forEach(p => {
+          data.forEach((obj) => {
+            splitValidPaths(obj[pathKey]).forEach(p => {
               const k = normKey(p);
-              if (k) {
-                ALL_PATHS_SET.add(k);
-                allPathNames.add(cleanFaText(p));
-              }
+              if (k) ALL_PATHS_SET.add(k);
             });
 
-            // ========= آیدی دوره + وضعیت =========
             const cid = normKey(obj[courseIdKey]);
             const statusRaw = obj[statusKey] || "";
-
             if (cid && cid !== normKey("آیدی دوره") && isCountableCourseStatus(statusRaw)) {
               ALL_COURSES_SET.add(cid);
-            }
 
-            // ========= اساتید =========
-            const teacherCell = obj[teacherKey] || "";
-            splitTeachers(teacherCell).forEach(t => {
-              const cleaned = cleanFaText(t);
-              if (cleaned && cleaned !== "—") allTeachersNames.add(cleaned);
-            });
-
-            // ========= عنوان دوره =========
-            const courseTitle = cleanFaText(obj[titleKey] || "");
-            if (courseTitle) allCourseTitles.add(courseTitle);
-
-            // ========= مدت زمان کل (Unique by courseId across ALL sheets) =========
-            if (cid && cid !== normKey("آیدی دوره") && isCountableCourseStatus(statusRaw)) {
-              const durationCell = obj[durationKey];
-              const seconds = parseDurationToSeconds(durationCell);
-
+              const seconds = parseDurationToSeconds(obj[durationKey]);
               if (seconds > 0) {
-                if (!courseSecondsById.has(cid)) {
+                const prev = courseSecondsById.get(cid) || 0;
+                if (!courseSecondsById.has(cid) || seconds > prev) {
                   courseSecondsById.set(cid, seconds);
-                  if (!courseDurationLog.has(cid)) courseDurationLog.set(cid, String(durationCell));
-                } else {
-                  // اگر در شیت دیگر مقدار متفاوت بود، بزرگ‌تر را نگه می‌داریم
-                  const prev = courseSecondsById.get(cid) || 0;
-                  if (seconds > prev) {
-                    courseSecondsById.set(cid, seconds);
-                    courseDurationLog.set(cid, String(durationCell));
-                  }
                 }
               }
             }
+
+            splitTeachers(obj[teacherKey]).forEach(t => {
+              const cleaned = cleanFaText(t);
+              if (cleaned && cleaned !== "—") allTeachersNames.add(normKey(cleaned));
+            });
           });
 
         } catch (err) {
-          console.warn(`خطا در لود شیت ${school.name}:`, err);
+          console.warn("خطا در پردازش شیت:", school.code, err);
         }
       }
 
-      // --- محاسبه نهایی ---
-      TOTAL_ALL_PATHS = ALL_PATHS_SET.size;
-      TOTAL_ALL_COURSES = ALL_COURSES_SET.size;
-      TOTAL_ALL_TEACHERS = allTeachersNames.size;
+      $("#kpiTotalAllPaths").textContent = ALL_PATHS_SET.size.toLocaleString("fa-IR");
+      $("#kpiTotalCourses").textContent = ALL_COURSES_SET.size.toLocaleString("fa-IR");
+      $("#kpiTotalTeachers").textContent = allTeachersNames.size.toLocaleString("fa-IR");
 
       let sumSeconds = 0;
       for (const sec of courseSecondsById.values()) sumSeconds += (sec || 0);
-
-      // --- نمایش ---
-      $("#kpiTotalAllPaths").textContent = TOTAL_ALL_PATHS.toLocaleString("fa-IR");
-      $("#kpiTotalCourses").textContent = TOTAL_ALL_COURSES.toLocaleString("fa-IR");
-      $("#kpiTotalTeachers").textContent = TOTAL_ALL_TEACHERS.toLocaleString("fa-IR");
       $("#kpiTotalHours").textContent = formatSecondsToHMS_Fa(sumSeconds);
-
-      // --- TRACE مسیرها با ردیف و شیت ---
-      if (DEBUG_TRACE_PATHS) {
-        console.group(
-          "%cPATH TRACE (شیت/ردیف/مسیر خام/مسیر پارس‌شده)",
-          "color:#ffdd57;font-weight:bold;"
-        );
-        console.log("ستون مبنا برای مسیر:", COL.path);
-        console.table(pathTrace);
-
-        if (DEBUG_FIND_PATH) {
-          const key = normKey(DEBUG_FIND_PATH);
-          const hits = pathTrace.filter(x =>
-            normKey((x.مسیر_خام || "") + " " + (x.مسیرهای_پارس_شده || "")).includes(key)
-          );
-          console.group(`%cHITS for "${DEBUG_FIND_PATH}"`, "color:#4caf50;font-weight:bold;");
-          console.table(hits);
-          console.groupEnd();
-        }
-        console.groupEnd();
-      }
-
-      // --- لاگ‌های خروجی ---
-      console.log(
-        "%cلیست همه مسیرها (Valid - بدون خارج از مسیر):",
-        "font-weight:bold; color:#ffdd57"
-      );
-      console.log(Array.from(allPathNames).sort((a, b) => a.localeCompare(b, "fa")).join("\n"));
-
-      console.log(
-        "%cلیست همه اساتید (Split روی / + حذف تکراری):",
-        "font-weight:bold; color:#4caf50"
-      );
-      console.log(Array.from(allTeachersNames).sort((a, b) => a.localeCompare(b, "fa")).join("\n"));
-
-      console.log("%cلیست همه عنوان دوره‌ها:", "font-weight:bold; color:#e91e63");
-      console.log(Array.from(allCourseTitles).sort((a, b) => a.localeCompare(b, "fa")).join("\n"));
-
-      console.log("%cمدت زمان هر دوره (courseId : raw):", "font-weight:bold; color:#2196f3");
-      for (const [cid, raw] of courseDurationLog.entries()) console.log(`${cid}: ${raw}`);
-
-      console.log("%cجمع نهایی مدت زمان (HH:MM:SS):", "font-weight:bold; color:#ff5722", formatSecondsToHMS_Fa(sumSeconds));
-      console.log(
-        "%c=== پایان لاگ‌گیری کامل (Global) ===",
-        "font-weight:bold; color:#00d1b2; font-size:16px"
-      );
     }
 
     // ===============================
-    // مسیرهای یکتا برای مدرسه انتخاب‌شده (برای dropdown)
+    // Paths
     // ===============================
     function getAllUniquePaths(){
       const m = new Map();
@@ -1540,7 +1342,7 @@
     }
 
     // ===============================
-    // فیلتر مسیر (Dropdown)
+    // Path Dropdown
     // ===============================
     function updatePathButton(){
       const count = selectedPaths.length;
@@ -1619,6 +1421,8 @@
 
     $("#pathDropdownButton").addEventListener("click", (e) => {
       e.stopPropagation();
+      const disabled = $("#pathDropdownButton").getAttribute("aria-disabled") === "true";
+      if (disabled) return;
       togglePathDropdown();
     });
 
@@ -1660,16 +1464,14 @@
       sel.innerHTML = sizes.map(n => `<option value="${n}">${n.toLocaleString("fa-IR")} ردیف</option>`).join("");
       sel.value = String(PAGE_SIZE);
 
-      sel.addEventListener("change", () => {
+      sel.onchange = () => {
         PAGE_SIZE = parseInt(sel.value, 10) || 10;
         PAGE = 1;
         renderTable();
-      });
+      };
     }
 
-    function buildFilters(){
-      buildPathDropdown();
-    }
+    function buildFilters(){ buildPathDropdown(); }
 
     function rowMatchesPaths(row){
       if (selectedPaths.length === 0) return true;
@@ -1698,7 +1500,7 @@
     }
 
     // ===============================
-    // KPIs (برای داده فیلترشده)
+    // KPIs (School-only)
     // ===============================
     function computeKPIs(dataset = FILTERED){
       const rows = Array.isArray(dataset) ? dataset : [];
@@ -1707,8 +1509,8 @@
 
       const isPublished = (st) => st.includes("منتشر") || st.includes("انتشار");
       const isRunning   = (st) => st.includes("برگزار");
-      const isRecording = (st) => st === "در حال ضبط";
-      const isEditing   = (st) => st === "در حال تدوین";
+      const isRecording = (st) => st.includes("در حال ضبط");
+      const isEditing   = (st) => st.includes("در حال تدوین");
       const isProposed  = (st) => st.includes("پیشنهاد");
       const isUnderReview = (st) =>
         st.includes("در حال بررسی") ||
@@ -1733,8 +1535,7 @@
 
       const teacherSet = new Set();
       rows.forEach(r => {
-        const teachers = splitTeachers(r[COL.teacher]);
-        teachers.forEach(t => {
+        splitTeachers(r[COL.teacher]).forEach(t => {
           const k = norm(t);
           if (k && k !== "—") teacherSet.add(k);
         });
@@ -1750,9 +1551,6 @@
       });
       $("#kpiPaths").textContent = pathSet.size.toLocaleString("fa-IR");
 
-      const backlog = recording + editing + proposedOrReview;
-      $("#kpiBacklog").textContent = backlog.toLocaleString("fa-IR");
-
       const d = DASH_UPDATED_AT || new Date();
       $("#kpiUpdated").textContent = d.toLocaleString("fa-IR");
     }
@@ -1760,9 +1558,11 @@
     // ===============================
     // Charts
     // ===============================
-    Chart.defaults.font.family = '"IRANSans", "IRANSansWeb", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial';
-    Chart.defaults.font.weight = "700";
-    Chart.defaults.color = "rgba(242,247,255,.80)";
+    if (window.Chart) {
+      Chart.defaults.font.family = '"IRANSans", "IRANSansWeb", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial';
+      Chart.defaults.font.weight = "700";
+      Chart.defaults.color = "rgba(242,247,255,.80)";
+    }
 
     function topN(entries, n=6){
       const arr = (entries || []).filter(x => x && x[0] && x[1] > 0);
@@ -1780,7 +1580,6 @@
       const slim = topN(filtered, 6);
       const labels = slim.map(x => x[0]);
       const values = slim.map(x => x[1]);
-
       const colors = slim.map(([k]) => pickColorByRules(k, rulesForColor || [], BRAND.deep));
       return { labels, values, colors, raw: filtered };
     }
@@ -1828,6 +1627,8 @@
     }
 
     function ensureDoughnutChart(canvasId, chartRef, dataObj){
+      if (!window.Chart) return null;
+
       const el = document.getElementById(canvasId);
       if (!el) return null;
 
@@ -1945,19 +1746,29 @@
     // ===============================
     // Events
     // ===============================
-    $("#q").addEventListener("input", applyFilters);
+    $("#q").addEventListener("input", () => {
+      if (!selectedSchool) return;
+      applyFilters();
+    });
 
     $("#prevPage").addEventListener("click", () => {
+      if (!selectedSchool) return;
       if (PAGE > 1) { PAGE--; renderTable(); }
     });
 
     $("#nextPage").addEventListener("click", () => {
+      if (!selectedSchool) return;
       const maxPage = Math.max(1, Math.ceil(FILTERED.length / PAGE_SIZE));
       if (PAGE < maxPage) { PAGE++; renderTable(); }
     });
 
-    $("#btnReload").addEventListener("click", () => {
-      if (selectedSchool) loadData(selectedSchool);
+    $("#btnReload").addEventListener("click", async () => {
+      // رفرش یعنی: دوباره Workbook را از فایل لوکال (کنار HTML) بخوان و KPI کلی را آپدیت کن
+      await loadWorkbookAuto();
+      if (WORKBOOK && selectedSchool){
+        loadDataFromWorkbook(selectedSchool);
+        setSchoolMode(true);
+      }
     });
 
     $("#btnReset").addEventListener("click", () => {
@@ -1971,11 +1782,29 @@
       updatePathButton();
 
       PAGE = 1;
-      applyFilters();
+      if (selectedSchool) applyFilters();
     });
 
-    // شروع
-    loadSchoolList();
+    // ===============================
+    // Boot
+    // ===============================
+    (function boot(){
+      if (!window.XLSX){
+        setStatus("bad", "xlsx.full.min.js لود نشده");
+        showToast("فایل xlsx.full.min.js کنار HTML نیست یا مسیرش اشتباه است");
+        return;
+      }
+      if (!window.Chart){
+        console.warn("Chart.js لود نشده است (chart.umd.min.js).");
+      }
+
+      // پیش‌فرض: فقط KPI های کلی، بقیه مخفی
+      setSchoolMode(false);
+      renderEmptySchoolArea();
+
+      // فایل اکسل را مستقیم از کنار HTML بخوان
+      loadWorkbookAuto();
+    })();
   </script>
 </body>
 </html>
